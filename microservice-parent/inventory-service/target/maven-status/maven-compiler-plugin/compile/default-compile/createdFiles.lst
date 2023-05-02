@@ -1,0 +1,5 @@
+com\ulascan\inventoryservice\controller\InventoryController.class
+com\ulascan\inventoryservice\repository\InventoryRepository.class
+com\ulascan\inventoryservice\model\Inventory.class
+com\ulascan\inventoryservice\service\InventoryService.class
+com\ulascan\inventoryservice\InventoryServiceApplication.class

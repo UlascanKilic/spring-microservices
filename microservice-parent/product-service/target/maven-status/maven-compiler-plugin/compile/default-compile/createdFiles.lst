@@ -1,0 +1,10 @@
+com\ulascan\productservice\dto\ProductResponseDTO$ProductResponseDTOBuilder.class
+com\ulascan\productservice\service\ProductService.class
+com\ulascan\productservice\dto\ProductRequestDTO.class
+com\ulascan\productservice\dto\ProductResponseDTO.class
+com\ulascan\productservice\controller\ProductController.class
+com\ulascan\productservice\dto\ProductRequestDTO$ProductRequestDTOBuilder.class
+com\ulascan\productservice\model\Product$ProductBuilder.class
+com\ulascan\productservice\model\Product.class
+com\ulascan\productservice\ProductServiceApplication.class
+com\ulascan\productservice\repository\ProductRepository.class

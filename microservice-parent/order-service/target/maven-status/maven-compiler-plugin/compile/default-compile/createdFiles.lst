@@ -1,0 +1,8 @@
+com\ulascan\orderservice\repository\OrderRepository.class
+com\ulascan\orderservice\model\Order.class
+com\ulascan\orderservice\controller\OrderController.class
+com\ulascan\orderservice\dto\OrderLineItemsDTO.class
+com\ulascan\orderservice\model\OrderLineItems.class
+com\ulascan\orderservice\OrderServiceApplication.class
+com\ulascan\orderservice\service\OrderService.class
+com\ulascan\orderservice\dto\OrderRequestDTO.class
