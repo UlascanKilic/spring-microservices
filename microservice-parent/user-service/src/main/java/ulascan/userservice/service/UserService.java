@@ -20,6 +20,7 @@ public class UserService {
     private final UserRepository userRepository;
 
     private final Mapper mapper;
+
     public List<UserDTO> getAllUsers(){
         //get all users
         //convert into userDTO
