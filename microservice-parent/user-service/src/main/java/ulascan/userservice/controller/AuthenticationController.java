@@ -3,17 +3,17 @@ package ulascan.userservice.controller;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.repository.query.Param;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import ulascan.userservice.dto.AuthenticationRequestDTO;
 import ulascan.userservice.dto.AuthenticationResponseDTO;
 import ulascan.userservice.dto.RegisterRequestDTO;
 import ulascan.userservice.service.AuthenticationService;
 
 import java.io.IOException;
+import java.net.URI;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -32,6 +32,20 @@ public class AuthenticationController {
             @RequestBody AuthenticationRequestDTO request
     ) {
         return service.authenticate(request);
+    }
+
+    @GetMapping("/verify")
+    public ResponseEntity<Void> verify(@Param("code") String code){
+        if(service.verify(code))
+        {
+            //TO DO:
+            //verify fail olursa sitede fail olan bir sayfaya yönlendirilecek
+            //verify fail olmazsa sitede başarılı! olan bir sayfaya yönlendirilecek
+        }
+        else {
+            //return "verify_fail";
+        }
+        return ResponseEntity.status(HttpStatus.FOUND).location(URI.create("https://ytustarverse.com/")).build();
     }
 
     @PostMapping("/refresh-token")

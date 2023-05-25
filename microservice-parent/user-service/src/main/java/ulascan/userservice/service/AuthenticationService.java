@@ -159,4 +159,19 @@ public class AuthenticationService {
             }
         }
     }
+
+    public boolean verify(String code) {
+        User user = repository.findByVerificationCode(code)
+                .orElseThrow();
+
+        if(!user.isActivated() && user.getVerificationCode() != null && user.getVerificationCode().equals(code))
+        {
+            user.setVerificationCode(null);
+            user.setActivated(true);
+            repository.save(user);
+
+            return true;
+        }
+        return false;
+    }
 }
