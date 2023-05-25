@@ -26,4 +26,10 @@ public class ProductController {
     public List<ProductResponseDTO> getAllProducts(){
         return productService.getAllProducts();
     }
+
+    @GetMapping("/deneme")
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    public String deneme(){
+        return "geldimke";
+    }
 }

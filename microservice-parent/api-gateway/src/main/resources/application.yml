@@ -1,0 +1,74 @@
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: product-service
+          uri: lb://product-service
+          predicates:
+            - Path=/api/product/**
+          filters:
+            - JwtAuthorizationFilter
+
+
+        - id: order-service
+          uri: lb://order-service
+          predicates:
+            - Path=/api/order
+          filters:
+            - JwtAuthorizationFilter
+
+        - id: identity-service
+          uri: lb://IDENTITY-SERVICE
+          predicates:
+            - Path=/auth/**
+
+        - id: user-service
+          uri: lb://user-service
+          predicates:
+            - Path=/api/auth/**
+
+
+        - id: user-service
+          uri: lb://user-service
+          predicates:
+            - Path=/api/admin/**
+          filters:
+            - JwtAuthorizationFilter
+
+        - id: discovery-server
+          uri: http://localhost:8761
+          predicates:
+            - Path=/eureka/web
+          filters:
+            - SetPath=/
+
+        - id: discovery-server-static
+          uri: http://localhost:8761
+          predicates:
+            - Path=/eureka/**
+
+  application:
+    name: api-gateway
+    security:
+      jwt:
+        secret-key: 404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970
+        expiration: 86400000 # a day
+        refresh-token:
+          expiration: 604800000 # 7 days
+
+
+authorization:
+  endpoints:
+    - path: /api/admin
+      method: GET
+      authorities:
+        - ADMIN
+        - MANAGER
+
+
+
+
+eureka:
+  client:
+    service-url:
+      defaultZone : http://localhost:8761/eureka/
