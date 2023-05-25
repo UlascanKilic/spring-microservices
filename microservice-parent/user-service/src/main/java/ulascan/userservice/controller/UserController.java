@@ -16,7 +16,6 @@ public class UserController {
 
     private final UserService userService;
 
-
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     public List<UserDTO> getAllUsers()
@@ -40,7 +39,7 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")
-    @ResponseStatus(HttpStatus.OK)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteUserById(@PathVariable(value = "id") Integer userId)
     {
         userService.deleteUserById(userId);

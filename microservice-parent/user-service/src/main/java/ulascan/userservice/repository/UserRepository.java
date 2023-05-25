@@ -11,4 +11,6 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 
     Optional<User> findByVerificationCode(String code);
 
+    Optional<User> findById(Integer id);
+
 }
