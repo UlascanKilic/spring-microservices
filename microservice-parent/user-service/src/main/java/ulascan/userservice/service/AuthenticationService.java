@@ -5,6 +5,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -13,12 +15,10 @@ import org.springframework.stereotype.Service;
 import ulascan.userservice.dto.AuthenticationRequestDTO;
 import ulascan.userservice.dto.AuthenticationResponseDTO;
 import ulascan.userservice.dto.RegisterRequestDTO;
-import ulascan.userservice.entity.Role;
-import ulascan.userservice.entity.Token;
-import ulascan.userservice.entity.TokenType;
-import ulascan.userservice.entity.User;
+import ulascan.userservice.entity.*;
 import ulascan.userservice.repository.TokenRepository;
 import ulascan.userservice.repository.UserRepository;
+import ulascan.userservice.utils.RandomString;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -34,15 +34,30 @@ public class AuthenticationService {
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
 
-    public AuthenticationResponseDTO register(RegisterRequestDTO request) {
+    public ResponseEntity<?> register(RegisterRequestDTO request) {
         Map<String, Object> roleClaims = new HashMap<>();
-        var user = User.builder()
+
+        String randomCode = RandomString.make(64);
+
+        if(repository.findByEmail(request.getEmail()).isPresent()) return new ResponseEntity<>("Email is in use!", HttpStatus.CONFLICT);
+
+        User user = User.builder()
                 .firstname(request.getFirstname())
                 .lastname(request.getLastname())
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
                 .role(request.getRole())
+                .avatarName(request.getAvatarName())
+                .verificationCode(randomCode)
+                .resetPasswordCode("")
+                .activated(false)
+                .isPrivileged(false)
                 .build();
+
+
+        //TODO send mail mailService.sendVerificationEmail(userEntity, "http://193.140.7.178:7769");
+
+        //JWT
         //List<String> roleStrings = jwtService.convertAuthoritiesToStringList((List<SimpleGrantedAuthority>) user.getAuthorities());
         String roleString = String.valueOf(user.getRole());
         roleClaims.put("role", roleString);
@@ -50,13 +65,14 @@ public class AuthenticationService {
         var jwtToken = jwtService.generateToken(roleClaims, user);
         var refreshToken = jwtService.generateRefreshToken(roleClaims,user);
         //saveUserToken(savedUser, jwtToken);
-        return AuthenticationResponseDTO.builder()
+        return  ResponseEntity.ok().body(AuthenticationResponseDTO.builder()
                 .accessToken(jwtToken)
                 .refreshToken(refreshToken)
-                .build();
+                .build());
     }
 
-    public AuthenticationResponseDTO authenticate(AuthenticationRequestDTO request) {
+    public ResponseEntity<?> authenticate(AuthenticationRequestDTO request) {
+
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         request.getEmail(),
@@ -64,8 +80,14 @@ public class AuthenticationService {
                 )
         );
         Map<String, Object> roleClaims = new HashMap<>();
-        var user = repository.findByEmail(request.getEmail())
+        User user = repository.findByEmail(request.getEmail())
                 .orElseThrow();
+
+        //filter chain
+        if(!user.isActivated()) return new ResponseEntity<String>("User is not activated!", HttpStatus.FORBIDDEN);
+        if(!passwordEncoder.matches(request.getPassword(), user.getPassword())) return new ResponseEntity<String>("Wrong Password!", HttpStatus.FORBIDDEN);
+
+        //JWT
         //List<String> roleStrings = jwtService.convertAuthoritiesToStringList((List<SimpleGrantedAuthority>) user.getAuthorities());
         String roleString = String.valueOf(user.getRole());
         roleClaims.put("role", roleString);
@@ -73,10 +95,16 @@ public class AuthenticationService {
         var refreshToken = jwtService.generateRefreshToken(roleClaims,user);
         //revokeAllUserTokens(user);
         //saveUserToken(user, jwtToken);
-        return AuthenticationResponseDTO.builder()
-                .accessToken(jwtToken)
-                .refreshToken(refreshToken)
-                .build();
+
+         return ResponseEntity.ok().body(
+                AuthenticationResponseDTO.builder()
+                        .accessToken(jwtToken)
+                        .refreshToken(refreshToken)
+                        .name(user.getFirstname())
+                        .lastname(user.getLastname())
+                        .avatarName(user.getAvatarName())
+                        .isPrivileged(user.isPrivileged())
+                .build());
     }
 
     private void saveUserToken(User user, String jwtToken) {

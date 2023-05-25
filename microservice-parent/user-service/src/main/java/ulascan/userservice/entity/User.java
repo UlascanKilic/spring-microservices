@@ -1,6 +1,7 @@
 package ulascan.userservice.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -23,14 +24,32 @@ public class User implements UserDetails {
     private Integer id;
     private String firstname;
     private String lastname;
+
+    @Email(message = "Email should be valid")
     private String email;
     private String password;
+
+    private String avatarName;
+
+    private String verificationCode;
+
+    private String resetPasswordCode;
+
+    private boolean activated;
+
+    private boolean isPrivileged;
 
     @Enumerated(EnumType.STRING)
     private Role role;
 
+    /*@OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "verification_id", referencedColumnName = "id")
+    private Verification verification;*/
+
     @OneToMany(mappedBy = "user")
     private List<Token> tokens;
+
+
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
