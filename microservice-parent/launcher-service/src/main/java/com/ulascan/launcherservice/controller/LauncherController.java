@@ -7,6 +7,7 @@ import com.ulascan.launcherservice.service.LauncherService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -24,10 +25,9 @@ public class LauncherController {
     }
 
     @GetMapping
-    @ResponseStatus(HttpStatus.OK)
-    private LauncherDTO getLauncher()
+    private ResponseEntity<LauncherDTO> getLauncher()
     {
-        return launcherService.getLauncher();
+         return ResponseEntity.ok(launcherService.getLauncher());
     }
 
     @PostMapping("/text")
@@ -37,8 +37,8 @@ public class LauncherController {
     }
 
     @GetMapping("/text")
-    @ResponseStatus(HttpStatus.OK)
-    private LauncherTextDTO getLauncherText() {
-       return launcherService.getLauncherText();
+    private ResponseEntity<LauncherTextDTO> getLauncherText() {
+
+        return ResponseEntity.ok(launcherService.getLauncherText());
     }
 }
