@@ -14,6 +14,7 @@
         <module name="product-service" />
         <module name="order-service" />
         <module name="user-service" />
+        <module name="server-service" />
       </profile>
     </annotationProcessing>
   </component>
@@ -25,6 +26,7 @@
       <module name="launcher-service" options="-parameters" />
       <module name="order-service" options="-parameters" />
       <module name="product-service" options="-parameters" />
+      <module name="server-service" options="-parameters" />
       <module name="user-service" options="-parameters" />
     </option>
   </component>
