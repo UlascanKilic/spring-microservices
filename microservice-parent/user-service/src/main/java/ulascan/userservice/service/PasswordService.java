@@ -7,9 +7,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ulascan.userservice.dto.EmailDTO;
 import ulascan.userservice.dto.ResetPasswordDTO;
+import ulascan.userservice.dto.UserDTO;
 import ulascan.userservice.entity.User;
+import ulascan.userservice.exception.BadRequestException;
+import ulascan.userservice.exception.Error;
 import ulascan.userservice.repository.UserRepository;
 import ulascan.userservice.utils.Mapper;
 import ulascan.userservice.utils.RandomString;
@@ -22,6 +26,9 @@ public class PasswordService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
+    private final Mapper mapper;
+
+    @Transactional
     public void forgotPassword(EmailDTO email) {
         User user = userByEmail(email.getEmail());
 
@@ -34,23 +41,32 @@ public class PasswordService {
 
     }
 
-    public ResponseEntity<?> resetPassword(ResetPasswordDTO dto){
+    @Transactional
+    public UserDTO resetPassword(ResetPasswordDTO dto){
+
         User user = userByEmail(dto.getEmail());
 
-        if(user.getResetPasswordCode() == null) return new ResponseEntity<String>("User's Password Code is Null!", HttpStatus.FORBIDDEN);
-        if(!user.getResetPasswordCode().equals(dto.getPasswordCode())) return new ResponseEntity<String>("Wrong Code!", HttpStatus.UNAUTHORIZED);
+        if(user.getResetPasswordCode() == null)
+            throw new BadRequestException(Error.RESET_PASSWORD_CODE_NOT_FOUND.getErrorCode(), Error.RESET_PASSWORD_CODE_NOT_FOUND.getErrorMessage());
+
+        if(!user.getResetPasswordCode().equals(dto.getPasswordCode()))
+            throw new BadRequestException(Error.RESET_PASSWORD_CODE_DOESNT_MATCH.getErrorCode(), Error.RESET_PASSWORD_CODE_DOESNT_MATCH.getErrorMessage());
 
         user.setPassword(passwordEncoder.encode(dto.getNewPassword()));
         user.setResetPasswordCode(null);
 
         userRepository.save(user);
 
-        return ResponseEntity.ok().build();
+        return mapper.entityToDTO(user);
 
     }
 
     public User userByEmail(String email){
-        return userRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        User user = userRepository.findByEmail(email);
+
+        if(user == null)  throw new BadRequestException(Error.USER_DOESNT_EXIST.getErrorCode(), Error.USER_DOESNT_EXIST.getErrorMessage());
+
+        return user;
     }
 
 }

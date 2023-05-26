@@ -22,16 +22,16 @@ public class AuthenticationController {
     private final AuthenticationService service;
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(
+    public ResponseEntity<AuthenticationResponseDTO> register(
             @RequestBody RegisterRequestDTO request
     ) {
-        return service.register(request);
+        return ResponseEntity.ok(service.register(request));
     }
     @PostMapping("/authenticate")
-    public ResponseEntity<?> authenticate(
+    public ResponseEntity<AuthenticationResponseDTO> authenticate(
             @RequestBody AuthenticationRequestDTO request
     ) {
-        return service.authenticate(request);
+        return ResponseEntity.ok(service.authenticate(request));
     }
 
     @GetMapping("/verify")

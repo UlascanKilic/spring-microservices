@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ulascan.userservice.dto.EmailDTO;
 import ulascan.userservice.dto.ResetPasswordDTO;
+import ulascan.userservice.dto.UserDTO;
 import ulascan.userservice.service.PasswordService;
 
 @RestController
@@ -23,8 +24,7 @@ public class PasswordController {
     }
 
     @PutMapping("/reset")
-    @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<?> resetPassword(@RequestBody ResetPasswordDTO resetPasswordDTO){
-        return passwordService.resetPassword(resetPasswordDTO);
+    public ResponseEntity<UserDTO> resetPassword(@RequestBody ResetPasswordDTO resetPasswordDTO){
+        return ResponseEntity.ok(passwordService.resetPassword(resetPasswordDTO));
     }
 }

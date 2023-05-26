@@ -12,10 +12,13 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ulascan.userservice.dto.AuthenticationRequestDTO;
 import ulascan.userservice.dto.AuthenticationResponseDTO;
 import ulascan.userservice.dto.RegisterRequestDTO;
 import ulascan.userservice.entity.*;
+import ulascan.userservice.exception.BadRequestException;
+import ulascan.userservice.exception.Error;
 import ulascan.userservice.repository.TokenRepository;
 import ulascan.userservice.repository.UserRepository;
 import ulascan.userservice.utils.RandomString;
@@ -34,12 +37,14 @@ public class AuthenticationService {
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
 
-    public ResponseEntity<?> register(RegisterRequestDTO request) {
+    @Transactional
+    public AuthenticationResponseDTO register(RegisterRequestDTO request) {
         Map<String, Object> roleClaims = new HashMap<>();
 
         String randomCode = RandomString.make(64);
 
-        if(repository.findByEmail(request.getEmail()).isPresent()) return new ResponseEntity<>("Email is in use!", HttpStatus.CONFLICT);
+        if(repository.findByEmail(request.getEmail()) != null)
+            throw new BadRequestException(Error.EMAIL_IS_IN_USE.getErrorCode(), Error.EMAIL_IS_IN_USE.getErrorMessage());
 
         User user = User.builder()
                 .firstname(request.getFirstname())
@@ -65,13 +70,13 @@ public class AuthenticationService {
         var jwtToken = jwtService.generateToken(roleClaims, user);
         var refreshToken = jwtService.generateRefreshToken(roleClaims,user);
         //saveUserToken(savedUser, jwtToken);
-        return  ResponseEntity.ok().body(AuthenticationResponseDTO.builder()
+        return  AuthenticationResponseDTO.builder()
                 .accessToken(jwtToken)
                 .refreshToken(refreshToken)
-                .build());
+                .build();
     }
 
-    public ResponseEntity<?> authenticate(AuthenticationRequestDTO request) {
+    public AuthenticationResponseDTO authenticate(AuthenticationRequestDTO request) {
 
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
@@ -80,12 +85,15 @@ public class AuthenticationService {
                 )
         );
         Map<String, Object> roleClaims = new HashMap<>();
-        User user = repository.findByEmail(request.getEmail())
-                .orElseThrow();
+        User user = repository.findByEmail(request.getEmail());
+
+        if(user == null) throw new BadRequestException(Error.USER_DOESNT_EXIST.getErrorCode(), Error.USER_DOESNT_EXIST.getErrorMessage());
 
         //filter chain
-        if(!user.isActivated()) return new ResponseEntity<String>("User is not activated!", HttpStatus.FORBIDDEN);
-        if(!passwordEncoder.matches(request.getPassword(), user.getPassword())) return new ResponseEntity<String>("Wrong Password!", HttpStatus.FORBIDDEN);
+        if(!user.isActivated()) throw new BadRequestException(Error.INACTIVE_USER.getErrorCode(), Error.INACTIVE_USER.getErrorMessage());
+
+        if(!passwordEncoder.matches(request.getPassword(), user.getPassword()))
+            throw new BadRequestException(Error.WRONG_PASSWORD.getErrorCode(), Error.WRONG_PASSWORD.getErrorMessage());
 
         //JWT
         //List<String> roleStrings = jwtService.convertAuthoritiesToStringList((List<SimpleGrantedAuthority>) user.getAuthorities());
@@ -96,15 +104,15 @@ public class AuthenticationService {
         //revokeAllUserTokens(user);
         //saveUserToken(user, jwtToken);
 
-         return ResponseEntity.ok().body(
-                AuthenticationResponseDTO.builder()
-                        .accessToken(jwtToken)
-                        .refreshToken(refreshToken)
-                        .name(user.getFirstname())
-                        .lastname(user.getLastname())
-                        .avatarName(user.getAvatarName())
-                        .isPrivileged(user.isPrivileged())
-                .build());
+         return AuthenticationResponseDTO.builder()
+                 .accessToken(jwtToken)
+                 .refreshToken(refreshToken)
+                 .name(user.getFirstname())
+                 .lastname(user.getLastname())
+                 .avatarName(user.getAvatarName())
+                 .isPrivileged(user.isPrivileged())
+                 .build();
+
     }
 
     private void saveUserToken(User user, String jwtToken) {
@@ -117,6 +125,7 @@ public class AuthenticationService {
                 .build();
         tokenRepository.save(token);
     }
+
 
     private void revokeAllUserTokens(User user) {
         var validUserTokens = tokenRepository.findAllValidTokenByUser(user.getId());
@@ -142,8 +151,10 @@ public class AuthenticationService {
         refreshToken = authHeader.substring(7);
         userEmail = jwtService.extractUsername(refreshToken);
         if (userEmail != null) {
-            var user = this.repository.findByEmail(userEmail)
-                    .orElseThrow();
+            var user = this.repository.findByEmail(userEmail);
+
+            if(user == null) throw new BadRequestException(Error.USER_DOESNT_EXIST.getErrorCode(), Error.USER_DOESNT_EXIST.getErrorMessage());
+
             if (jwtService.isTokenValid(refreshToken, user)) {
                 Map<String, Object> roleClaims = new HashMap<>();
                 List<String> roleStrings = jwtService.convertAuthoritiesToStringList((List<SimpleGrantedAuthority>) user.getAuthorities());
@@ -160,9 +171,11 @@ public class AuthenticationService {
         }
     }
 
+    @Transactional
     public boolean verify(String code) {
-        User user = repository.findByVerificationCode(code)
-                .orElseThrow();
+        User user = repository.findByVerificationCode(code);
+
+        if(user == null) throw new BadRequestException(Error.VERIFICATION_DOESNT_EXIST.getErrorCode(), Error.VERIFICATION_DOESNT_EXIST.getErrorMessage());
 
         if(!user.isActivated() && user.getVerificationCode() != null && user.getVerificationCode().equals(code))
         {

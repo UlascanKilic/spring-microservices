@@ -7,6 +7,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import ulascan.userservice.dto.UserDTO;
 import ulascan.userservice.entity.User;
+import ulascan.userservice.exception.BadRequestException;
+import ulascan.userservice.exception.Error;
 import ulascan.userservice.repository.UserRepository;
 import ulascan.userservice.utils.Mapper;
 
@@ -46,13 +48,13 @@ public class UserService {
     {
         User user = userById(userId);
         userRepository.delete(user);
-        //find user by id
-        //if user is not null
-        //delete
 
     }
 
     public User userById(Integer userId){
-        return userRepository.findById(userId).orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        if(userRepository.findById(userId).isEmpty())
+            throw new BadRequestException(Error.USER_DOESNT_EXIST.getErrorCode(), Error.USER_DOESNT_EXIST.getErrorMessage());
+
+        return userRepository.findById(userId).get();
     }
 }
