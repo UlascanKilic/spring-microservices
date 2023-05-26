@@ -9,18 +9,12 @@ spring:
           filters:
             - JwtAuthorizationFilter
 
-
         - id: order-service
           uri: lb://order-service
           predicates:
             - Path=/api/order
           filters:
             - JwtAuthorizationFilter
-
-        - id: identity-service
-          uri: lb://IDENTITY-SERVICE
-          predicates:
-            - Path=/auth/**
 
         - id: user-service
           uri: lb://user-service
@@ -38,6 +32,12 @@ spring:
             - Path=/api/admin/**
           filters:
             - JwtAuthorizationFilter
+
+        - id: launcher-service
+          uri: lb://launcher-service
+          predicates:
+            - Path=/api/launcher/**
+
 
         - id: discovery-server
           uri: http://localhost:8761
