@@ -38,6 +38,11 @@ spring:
           predicates:
             - Path=/api/launcher/**
 
+        - id: server-service
+          uri: lb://server-service
+          predicates:
+            - Path=/api/server/status/**
+
 
         - id: discovery-server
           uri: http://localhost:8761
