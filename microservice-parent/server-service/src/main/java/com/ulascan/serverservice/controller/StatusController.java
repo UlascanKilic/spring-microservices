@@ -18,7 +18,7 @@ public class StatusController {
 
     @GetMapping
     public ResponseEntity<List<StatusDTO>> getAllServerStatus(){
-        return ResponseEntity.ok(statusService.getAllServerStatus());
+        return ResponseEntity.ok(statusService.getAllServerStatus()); //TODO HERKESE ACIK OLACAK
     }
 
     @PostMapping

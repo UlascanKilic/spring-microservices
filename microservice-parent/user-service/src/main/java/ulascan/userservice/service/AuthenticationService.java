@@ -90,7 +90,8 @@ public class AuthenticationService {
         if(user == null) throw new BadRequestException(Error.USER_DOESNT_EXIST.getErrorCode(), Error.USER_DOESNT_EXIST.getErrorMessage());
 
         //filter chain
-        if(!user.isActivated()) throw new BadRequestException(Error.INACTIVE_USER.getErrorCode(), Error.INACTIVE_USER.getErrorMessage());
+        //TODO UNDO COMMENT LINE
+        //if(!user.isActivated()) throw new BadRequestException(Error.INACTIVE_USER.getErrorCode(), Error.INACTIVE_USER.getErrorMessage());
 
         if(!passwordEncoder.matches(request.getPassword(), user.getPassword()))
             throw new BadRequestException(Error.WRONG_PASSWORD.getErrorCode(), Error.WRONG_PASSWORD.getErrorMessage());
@@ -107,10 +108,9 @@ public class AuthenticationService {
          return AuthenticationResponseDTO.builder()
                  .accessToken(jwtToken)
                  .refreshToken(refreshToken)
-                 .name(user.getFirstname())
+                 .firstname(user.getFirstname())
                  .lastname(user.getLastname())
-                 .avatarName(user.getAvatarName())
-                 .isPrivileged(user.isPrivileged())
+                 .role(user.getRole().name())
                  .build();
 
     }
