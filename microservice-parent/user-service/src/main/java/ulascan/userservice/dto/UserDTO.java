@@ -14,6 +14,5 @@ public class UserDTO {
     private String firstname;
     private String lastname;
     private String email;
-    private String avatarName;
     private boolean isPrivileged;
 }

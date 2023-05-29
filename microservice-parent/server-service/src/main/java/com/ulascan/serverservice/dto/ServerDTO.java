@@ -1,17 +1,17 @@
 package com.ulascan.serverservice.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-@Data
+@Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class StatusDTO {
+public class ServerDTO {
 
     private String serverName;
+
+    private String unitySceneName;
 
     private Integer userCount;
 
@@ -19,6 +19,7 @@ public class StatusDTO {
 
     private boolean isFull;
 
-    private int maxUserCapacity;
+
+
 
 }

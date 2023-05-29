@@ -1,16 +1,17 @@
 package com.ulascan.serverservice.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-@Data
+@Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class StatusCountDTO {
+public class ServerCountDTO {
     private String serverName;
+    private String activeScene;
 
     private Integer userCount;
+
+
 }

@@ -1,11 +1,15 @@
 package com.ulascan.serverservice.utils;
 
-import com.ulascan.serverservice.dto.StatusCountDTO;
-import com.ulascan.serverservice.dto.StatusDTO;
-import com.ulascan.serverservice.entity.Status;
+import com.ulascan.serverservice.dto.ServerCountDTO;
+import com.ulascan.serverservice.dto.ServerDTO;
+import com.ulascan.serverservice.dto.StartSceneDTO;
+import com.ulascan.serverservice.entity.Scene;
+import com.ulascan.serverservice.entity.Server;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.PropertyMap;
+import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,32 +24,54 @@ public class Mapper {
     private ModelMapper modelMapper;
 
     public <S, T> List<T> mapList(List<S> source, Class<T> targetClass) {
+        modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.LOOSE);
         return source
                 .stream()
                 .map(element -> modelMapper.map(element, targetClass))
                 .collect(Collectors.toList());
     }
 
+    /*<SceneResponseDTO, Scene> sceneMapping = new PropertyMap<SceneResponseDTO, Scene>() {
+        protected void configure() {
+            map().getServer().setUserCount(source.getUserCount());
+            map().getServer().setMaxUserCapacity(source.getMaxUserCapacity());
+        }
+    };*/
 
-    public Status dtoToEntity(StatusDTO statusDTO, Status status) {
+    public Scene dtoToEntity(StartSceneDTO startSceneDTO, Scene scene)
+    {
         this.modelMapper.getConfiguration().setSkipNullEnabled(true);
+        modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
+        this.modelMapper.map(startSceneDTO, scene);
+        scene.setActive(false);
+        scene.setServer(null);
+        scene.setPrivateScene(scene.getScenePassword().isEmpty());
+        return scene;
 
-        this.modelMapper.map(statusDTO, status);
-
-        status.setFull(statusDTO.getUserCount() >= status.getMaxUserCapacity());
-        return status;
     }
 
-    public Status dtoToEntity(StatusCountDTO statusCountDTO, Status status) {
+    public Server dtoToEntity(ServerDTO serverDTO, Server server) {
         this.modelMapper.getConfiguration().setSkipNullEnabled(true);
+        modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
 
-        this.modelMapper.map(statusCountDTO, status);
+        this.modelMapper.map(serverDTO, server);
 
-        status.setFull(statusCountDTO.getUserCount() >= status.getMaxUserCapacity());
-        return status;
+        server.setPort(serverDTO.getServerName().substring(serverDTO.getServerName().length() - 4));
+
+        //server.setFull(serverDTO.getUserCount() >= server.getScene().getMaxUserCapacity());
+        return server;
     }
 
-    public StatusDTO entityToDTO(Status status) {
-        return modelMapper.map(status, StatusDTO.class);
+    public Server dtoToEntity(ServerCountDTO serverCountDTO, Server server) {
+        this.modelMapper.getConfiguration().setSkipNullEnabled(true);
+
+        this.modelMapper.map(serverCountDTO, server);
+
+       // server.setFull(serverCountDTO.getUserCount() >= server.getScene().getMaxUserCapacity());
+        return server;
+    }
+
+    public ServerDTO entityToDTO(Server server) {
+        return modelMapper.map(server, ServerDTO.class);
     }
 }

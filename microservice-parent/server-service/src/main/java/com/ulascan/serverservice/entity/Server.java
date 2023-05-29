@@ -1,22 +1,17 @@
 package com.ulascan.serverservice.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import jakarta.persistence.*;
+import lombok.*;
 import org.springframework.beans.factory.annotation.Value;
 
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
 @Builder
-@Table(name = "server_status")
-public class Status {
+@Table(name = "server")
+public class Server {
 
     @Id
     @GeneratedValue
@@ -31,6 +26,10 @@ public class Status {
 
     private boolean isFull = false;
 
-    @Value("${entity.max.user.count}")
-    private int maxUserCapacity;
+    private String port;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "scene_id", referencedColumnName = "id")
+    private Scene scene;
+
 }
