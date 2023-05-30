@@ -41,12 +41,12 @@ spring:
         - id: server-service
           uri: lb://server-service
           predicates:
-            - Path=/api/server/status/**
+            - Path=/api/server/**
 
         - id: server-service
           uri: lb://server-service
           predicates:
-            - Path=/api/server/scene/**
+            - Path=/api/scene/**
 
 
         - id: discovery-server

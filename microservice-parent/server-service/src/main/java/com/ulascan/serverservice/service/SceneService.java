@@ -2,13 +2,13 @@ package com.ulascan.serverservice.service;
 
 import com.ulascan.serverservice.dto.*;
 import com.ulascan.serverservice.entity.Scene;
-import com.ulascan.serverservice.entity.Server;
 import com.ulascan.serverservice.enums.DefaultUnityScenes;
 import com.ulascan.serverservice.enums.SceneType;
+import com.ulascan.serverservice.enums.UnityScene;
 import com.ulascan.serverservice.exception.BadRequestException;
 import com.ulascan.serverservice.exception.Error;
 import com.ulascan.serverservice.repository.SceneRepository;
-import com.ulascan.serverservice.repository.ServerRepository;
+import com.ulascan.serverservice.utils.Constants;
 import com.ulascan.serverservice.utils.Mapper;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
@@ -29,26 +29,23 @@ public class SceneService {
 
     private final Mapper mapper;
 
-
-    @Value("${entity.max.user.count}")
-    private Integer maxUserCount;
-
     @PostConstruct
     private void postConstruct() {
-        List<String> sceneNameList = sceneRepository.findAllUnitySceneNames();
-        for(DefaultUnityScenes sceneName : DefaultUnityScenes.values() ){
-            if(!sceneNameList.contains(sceneName.name())){
+        List<UnityScene> sceneNameList = sceneRepository.findAllUnitySceneNames();
+
+        for(UnityScene sceneName : DefaultUnityScenes.DEFAULT_UNITY_SCENES.getScenes() ){
+            if(!sceneNameList.contains(sceneName)){
                 //open scene
                 sceneRepository.save(Scene.builder()
-                        .unitySceneName(sceneName.name())
+                        .unityScene(sceneName)
                         .sceneName("ORTABAHCE")
-                        .scenePassword("")
+                        .scenePassword(Constants.DEFAULT_PASSWORD)
                         .hostEmail("ytustarverse@gmail.com")
                         .hostFirstName("YTU")
                         .hostLastName("Starverse")
-                        .isPrivateScene(false)
+                        .privateScene(false)
                         .sceneType(SceneType.DEFAULT)
-                        .maxUserCapacity(maxUserCount)
+                        .maxUserCapacity(Constants.MAX_USER_COUNT)
                         .active(false)
                         .build());
             }
@@ -60,44 +57,33 @@ public class SceneService {
     }
 
     @Transactional
-    public void startScene(SceneRequestDTO sceneRequestDTO) {
-        //TODO aynı isimden iki tane scene olamaz! (sceneName)
-        //todo bir email sadece bir tane sahne açabilir(default hariç)
-        //todo scene passwor'u şifreleyip koy
+    public StartSceneResponseDTO startScene(SceneRequestDTO sceneRequestDTO) {
 
-        boolean isAnyAvailableServer = serverService.findFreeServer();
+        filterChainForStartScene(sceneRequestDTO);
 
-        if(!isAnyAvailableServer){
-            throw new BadRequestException(Error.NO_FREE_SERVER_FOUND.getErrorCode(),
-                    Error.NO_FREE_SERVER_FOUND.getErrorMessage());
-        }
-        if(checkIfNameExists(sceneRequestDTO.getSceneName()))
-        {
-            throw new BadRequestException(Error.DUPLICATE_SCENE_NAME.getErrorCode(),
-                    Error.DUPLICATE_SCENE_NAME.getErrorMessage());
-        }
-
-        sceneRepository.save(mapper.dtoToEntity(sceneRequestDTO, Scene.builder().build()));
+        return StartSceneResponseDTO
+                .builder()
+                    .scenePassword(sceneRepository
+                    .save(mapper
+                            .dtoToEntity(sceneRequestDTO, Scene.builder().build()))
+                    .getScenePassword())
+                .build();
 
     }
 
-    public void loginScene(LoginSceneDTO loginSceneDTO) {
-        Scene scene = sceneRepository.getSceneBySceneName(loginSceneDTO.getSceneName());
-        // todo scene name null ise? repodan null ref gelir?
+    public void joinScene(JoinSceneDTO joinSceneDTO) {
+        Scene scene = sceneRepository.getSceneBySceneName(joinSceneDTO.getSceneName());
 
         if(scene == null){
             throw new BadRequestException(Error.SCENE_NOT_FOUND.getErrorCode(),
                     Error.SCENE_NOT_FOUND.getErrorMessage());
         }
-        else if(!Objects.equals(scene.getScenePassword(), loginSceneDTO.getPassword()))
+        else if(!Objects.equals(scene.getScenePassword(), joinSceneDTO.getPassword()))
         {
             throw new BadRequestException(Error.SCENE_PASSWORD_DOESNT_MATCH.getErrorCode(),
                     Error.SCENE_PASSWORD_DOESNT_MATCH.getErrorMessage());
         }
 
-        //todo scene active değilse?
-
-        //todo hangi kullanıcı hangi sunucuda bilgisini db de tutacak mıyız?
     }
 
     public List<SceneResponseDTO> getActiveScenesByType(SceneByTypeRequestDTO dto) {
@@ -112,5 +98,32 @@ public class SceneService {
     private boolean checkIfNameExists(String name)
     {
         return sceneRepository.findBySceneName(name).isPresent();
+    }
+    private boolean checkIfHostExists(String hostEmail){
+        return sceneRepository.findByHostEmail(hostEmail).isPresent();
+    }
+
+    public void deleteSceneByServerName(String serverName) {
+        serverService.deleteSceneByServerName(serverName);
+    }
+
+    private void filterChainForStartScene(SceneRequestDTO sceneRequestDTO)
+    {
+        boolean isAnyAvailableServer = serverService.findFreeServer();
+
+        if(!isAnyAvailableServer){
+            throw new BadRequestException(Error.NO_FREE_SERVER_FOUND.getErrorCode(),
+                    Error.NO_FREE_SERVER_FOUND.getErrorMessage());
+        }
+        else if(checkIfNameExists(sceneRequestDTO.getSceneName()))
+        {
+            throw new BadRequestException(Error.DUPLICATE_SCENE_NAME.getErrorCode(),
+                    Error.DUPLICATE_SCENE_NAME.getErrorMessage());
+        }
+        else if(checkIfHostExists(sceneRequestDTO.getHostEmail()))
+        {
+            throw new BadRequestException(Error.HOST_ALREADY_EXISTS.getErrorCode(),
+                    Error.HOST_ALREADY_EXISTS.getErrorMessage());
+        }
     }
 }

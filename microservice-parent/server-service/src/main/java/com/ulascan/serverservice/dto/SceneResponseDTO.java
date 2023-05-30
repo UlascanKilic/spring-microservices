@@ -1,6 +1,7 @@
 package com.ulascan.serverservice.dto;
 
 import com.ulascan.serverservice.enums.SceneType;
+import com.ulascan.serverservice.enums.UnityScene;
 import lombok.*;
 
 @Getter
@@ -10,7 +11,7 @@ import lombok.*;
 @AllArgsConstructor
 public class SceneResponseDTO {
 
-    private String unitySceneName;
+    private UnityScene unityScene;
     private String sceneName;
     private String hostFirstName;
     private String hostLastName;
@@ -19,7 +20,7 @@ public class SceneResponseDTO {
 
     private SceneType sceneType;
 
-    private boolean isPrivateScene;
+    private boolean privateScene;
 
     private int userCount;
     private int maxUserCapacity;

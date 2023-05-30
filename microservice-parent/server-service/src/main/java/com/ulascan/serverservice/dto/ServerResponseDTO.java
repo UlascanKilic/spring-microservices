@@ -1,5 +1,6 @@
 package com.ulascan.serverservice.dto;
 
+import com.ulascan.serverservice.enums.UnityScene;
 import lombok.*;
 
 @Getter
@@ -8,6 +9,6 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ServerResponseDTO {
-    private String unitySceneName; // todo enum yap
+    private UnityScene unityScene;
 
 }

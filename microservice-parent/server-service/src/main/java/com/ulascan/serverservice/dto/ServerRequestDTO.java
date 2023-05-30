@@ -1,5 +1,6 @@
 package com.ulascan.serverservice.dto;
 
+import com.ulascan.serverservice.enums.UnityScene;
 import lombok.*;
 
 @Getter
@@ -11,7 +12,7 @@ public class ServerRequestDTO {
 
     private String serverName;
 
-    private String unitySceneName;
+    private UnityScene unityScene;
 
     private Integer userCount;
 

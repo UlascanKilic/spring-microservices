@@ -3,6 +3,7 @@ package com.ulascan.serverservice.repository;
 import com.ulascan.serverservice.entity.Scene;
 import com.ulascan.serverservice.entity.Server;
 import com.ulascan.serverservice.enums.SceneType;
+import com.ulascan.serverservice.enums.UnityScene;
 import com.ulascan.serverservice.view.UnitySceneNameView;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -20,15 +21,14 @@ public interface SceneRepository extends JpaRepository<Scene,Integer> {
 
     Scene findByServerServerName(String serverName);
 
-    Scene findFirstByActiveFalse();
+    Scene findFirstByActiveFalseOrderBySceneTypeAsc();
 
     Scene getSceneBySceneName(String sceneName);
-
-    List<UnitySceneNameView> findAllByUnitySceneName(String unitySceneName);
-
-    @Query(value = "SELECT req.unitySceneName FROM Scene req")
-    List<String> findAllUnitySceneNames();
+    @Query(value = "SELECT req.unityScene FROM Scene req")
+    List<UnityScene> findAllUnitySceneNames();
 
     Optional<Scene> findBySceneName(String sceneName);
+
+    Optional<Scene> findByHostEmail(String hostEmail);
 
 }

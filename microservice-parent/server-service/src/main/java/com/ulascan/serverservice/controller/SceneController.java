@@ -1,7 +1,6 @@
 package com.ulascan.serverservice.controller;
 
 import com.ulascan.serverservice.dto.*;
-import com.ulascan.serverservice.enums.SceneType;
 import com.ulascan.serverservice.service.SceneService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -10,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/server/scene")
+@RequestMapping("/api/scene")
 @RequiredArgsConstructor
 public class SceneController {
 
@@ -27,16 +26,13 @@ public class SceneController {
     }
 
     @PostMapping
-    public ResponseEntity<Void> startScene(@RequestBody SceneRequestDTO sceneRequestDTO){
-
-        sceneService.startScene(sceneRequestDTO);
-
-        return ResponseEntity.ok().build();
+    public ResponseEntity<StartSceneResponseDTO> startScene(@RequestBody SceneRequestDTO sceneRequestDTO){
+        return ResponseEntity.ok(sceneService.startScene(sceneRequestDTO));
     }
-    @PostMapping("/login")
-    public ResponseEntity<Void> loginScene(@RequestBody LoginSceneDTO loginSceneDTO)
+    @PostMapping("/join")
+    public ResponseEntity<Void> joinScene(@RequestBody JoinSceneDTO joinSceneDTO)
     {
-        sceneService.loginScene(loginSceneDTO);
+        sceneService.joinScene(joinSceneDTO);
 
         return ResponseEntity.ok().build();
     }
@@ -45,9 +41,11 @@ public class SceneController {
         return ResponseEntity.ok(sceneService.getActiveScenesByType(sceneByTypeRequestDTO));
     }
 
-
-
-
+    @DeleteMapping("/close/{serverName}")
+    public ResponseEntity<Void> deleteSceneByServerName(@PathVariable(value = "serverName") String serverName) {
+        sceneService.deleteSceneByServerName(serverName);
+        return ResponseEntity.ok().build();
+    }
 
 
 

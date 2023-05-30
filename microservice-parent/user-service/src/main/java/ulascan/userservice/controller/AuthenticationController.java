@@ -38,7 +38,7 @@ public class AuthenticationController {
     public ResponseEntity<Void> verify(@Param("code") String code){
         if(service.verify(code))
         {
-            //TO DO:
+            //TODO:
             //verify fail olursa sitede fail olan bir sayfaya yönlendirilecek
             //verify fail olmazsa sitede başarılı! olan bir sayfaya yönlendirilecek
         }

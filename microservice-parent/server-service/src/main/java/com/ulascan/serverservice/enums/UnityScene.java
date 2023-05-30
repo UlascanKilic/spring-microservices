@@ -3,12 +3,10 @@ package com.ulascan.serverservice.enums;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
-import java.util.Set;
-
 @RequiredArgsConstructor
-public enum UnitySceneName {
-    GAME_SCENE("GAMESCENE"),
-    IDLE_SCENE("IDLESCENE"),
+public enum UnityScene {
+    GAME_SCENE("GameScene"),
+    IDLE_SCENE("IdleScene"),
     CLASSROOM_SCENE("ClassroomScene");
 
     @Getter

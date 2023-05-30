@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/server/status")
+@RequestMapping("/api/server")
 @RequiredArgsConstructor
 public class ServerController {
 
@@ -41,12 +41,5 @@ public class ServerController {
     @DeleteMapping("/{serverName}")
     public void deleteServerByName(@PathVariable(value = "serverName") String serverName) {
         serverService.deleteServerByName(serverName);
-    }
-
-    @DeleteMapping("/close/{serverName}")
-    public ResponseEntity<Void> deleteSceneByServerName(@PathVariable(value = "serverName") String serverName) {
-        serverService.deleteSceneByServerName(serverName);
-
-        return ResponseEntity.ok().build();
     }
 }

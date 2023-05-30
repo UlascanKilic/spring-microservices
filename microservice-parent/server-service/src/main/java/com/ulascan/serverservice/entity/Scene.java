@@ -1,6 +1,7 @@
 package com.ulascan.serverservice.entity;
 
 import com.ulascan.serverservice.enums.SceneType;
+import com.ulascan.serverservice.enums.UnityScene;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,18 +18,19 @@ public class Scene {
     @GeneratedValue
     private Integer id;
 
-    private String unitySceneName; //enum yap
+    private UnityScene unityScene; //enum yap
     private String sceneName;
     private String scenePassword;
     private String hostEmail;
     private String hostFirstName;
     private String hostLastName;
 
-    @Value("${entity.max.user.count}")
     private int maxUserCapacity;
 
+    @Enumerated(EnumType.ORDINAL)
     private SceneType sceneType;
-    private boolean isPrivateScene;
+
+    private boolean privateScene;
     private boolean active;
 
     @OneToOne(mappedBy = "scene")

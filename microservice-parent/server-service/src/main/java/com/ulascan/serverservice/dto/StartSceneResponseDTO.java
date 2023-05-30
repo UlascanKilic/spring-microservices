@@ -7,7 +7,6 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class LoginSceneDTO {
-    private String sceneName;
-    private String password;
+public class StartSceneResponseDTO {
+    private String scenePassword;
 }
