@@ -26,7 +26,7 @@ public class SceneController {
     }
 
     @PostMapping
-    public ResponseEntity<StartSceneResponseDTO> startScene(@RequestBody SceneRequestDTO sceneRequestDTO){
+        public ResponseEntity<StartSceneResponseDTO> startScene(@RequestBody SceneRequestDTO sceneRequestDTO){
         return ResponseEntity.ok(sceneService.startScene(sceneRequestDTO));
     }
     @PostMapping("/join")

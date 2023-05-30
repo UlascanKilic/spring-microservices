@@ -1,15 +1,12 @@
 package com.ulascan.apigateway.filter;
 
-import com.ulascan.apigateway.entity.Permission;
 import com.ulascan.apigateway.entity.Role;
 import com.ulascan.apigateway.util.AuthorizationConfig;
 import com.ulascan.apigateway.util.JwtUtil;
 import lombok.Data;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
-import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.http.*;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.stereotype.Component;

@@ -1,0 +1,128 @@
+version: "3"
+services:
+  ## API GATEWAY
+  api-gateway:
+    #    image: organization-service
+    build:
+      context: ./api-gateway
+      dockerfile: ../api-gateway/Dockerfile
+    ports:
+      - "8080:8080"
+    networks:
+      - eduverse-network
+    depends_on:
+      - discovery-server
+
+  ## POSTGRES USER DB
+  postgres-user:
+    container_name: postgres-user
+    image: postgres
+    environment:
+      POSTGRES_DB: user-service
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      PGDATA: /data/postgres
+    networks:
+      - eduverse-network
+    volumes:
+      - ./postgres-user:/data/postgres
+    expose:
+      - "5431"
+    ports:
+      - "5431:5431"
+    command: -p 5431
+    restart: always
+
+  ## POSTGRES SERVER DB
+  postgres-server:
+    container_name: postgres-server
+    image: postgres
+    environment:
+      POSTGRES_DB: server-service
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      PGDATA: /data/postgres
+    networks:
+      - eduverse-network
+    volumes:
+      - ./postgres-server:/data/postgres
+    ports:
+      - "5432:5432"
+    command: -p 5432
+    restart: always
+
+  ## POSTGRES LAUNCHER DB
+  postgres-launcher:
+    container_name: postgres-launcher
+    image: postgres
+    environment:
+      POSTGRES_DB: launcher-service
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      PGDATA: /data/postgres
+    networks:
+      - eduverse-network
+    volumes:
+      - ./launcher-server:/data/postgres
+    ports:
+      - "5433:5433"
+    command: -p 5433
+    restart: always
+
+  ## Eureka Server
+  discovery-server:
+    build:
+      context: ./discovery-server
+      dockerfile: ../discovery-server/Dockerfile
+    image: starverse/discovery-server:latest
+    container_name: discovery-server
+    ports:
+      - "8761:8761"
+
+  ## SERVICES
+
+  ## User-Service Docker Compose Config
+  user-service:
+    container_name: user-service
+    build:
+      context: ./user-service
+      dockerfile: ../user-service/Dockerfile
+    image: starverse/user-service:latest
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-user:5431/user-service
+    depends_on:
+      - postgres-user
+      - discovery-server
+      - api-gateway
+  ## Server-Service Docker Compose Config
+  server-service:
+    container_name: server-service
+    build:
+      context: ./server-service
+      dockerfile: ../server-service/Dockerfile
+    image: starverse/server-service:latest
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-server:5432/server-service
+    depends_on:
+      - postgres-server
+      - discovery-server
+      - api-gateway
+
+  ## Server-Service Docker Compose Config
+  launcher-service:
+    container_name: launcher-service
+    build:
+      context: ./launcher-service
+      dockerfile: ../launcher-service/Dockerfile
+    image: starverse/launcher-service:latest
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-launcher:5433/launcher-service
+    depends_on:
+      - postgres-launcher
+      - discovery-server
+      - api-gateway
+
+
+networks:
+  eduverse-network:
+    external: true
