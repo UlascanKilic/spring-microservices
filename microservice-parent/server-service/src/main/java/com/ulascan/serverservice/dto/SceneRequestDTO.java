@@ -1,5 +1,6 @@
 package com.ulascan.serverservice.dto;
 
+import com.ulascan.serverservice.enums.SceneType;
 import lombok.*;
 
 @Getter
@@ -7,7 +8,7 @@ import lombok.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class StartSceneDTO {
+public class SceneRequestDTO {
 
     private String unitySceneName;
     private String sceneName;
@@ -15,7 +16,7 @@ public class StartSceneDTO {
     private String hostLastName;
     private String hostEmail;
     private String scenePassword;
-
+    private SceneType sceneType;
     private int maxUserCapacity;
 
     private boolean isPrivateScene;

@@ -7,19 +7,12 @@ import lombok.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ServerDTO {
+public class ServerRequestDTO {
 
     private String serverName;
 
     private String unitySceneName;
 
     private Integer userCount;
-
-    private boolean isUp;
-
-    private boolean isFull;
-
-
-
 
 }

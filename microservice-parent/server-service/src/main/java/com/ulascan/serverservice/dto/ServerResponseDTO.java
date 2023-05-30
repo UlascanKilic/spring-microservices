@@ -8,6 +8,6 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ServerResponseDTO {
-    private String unitySceneName;
+    private String unitySceneName; // todo enum yap
 
 }

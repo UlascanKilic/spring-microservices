@@ -1,7 +1,7 @@
 package com.ulascan.serverservice.controller;
 
-import com.ulascan.serverservice.dto.SceneResponseDTO;
-import com.ulascan.serverservice.dto.StartSceneDTO;
+import com.ulascan.serverservice.dto.*;
+import com.ulascan.serverservice.enums.SceneType;
 import com.ulascan.serverservice.service.SceneService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -21,16 +21,34 @@ public class SceneController {
         return ResponseEntity.ok(sceneService.getAllScenes());
     }
 
-    @PostMapping
-    public ResponseEntity<Void> startScene(@RequestBody StartSceneDTO startSceneDTO){
+    @PostMapping("/user")
+    public ResponseEntity<List<SceneResponseDTO>> getScenesByUser(@RequestBody SceneByUserRequestDTO sceneByUserRequestDTO){
+        return ResponseEntity.ok(sceneService.getScenesByUser(sceneByUserRequestDTO));
+    }
 
-        sceneService.startScene(startSceneDTO);
+    @PostMapping
+    public ResponseEntity<Void> startScene(@RequestBody SceneRequestDTO sceneRequestDTO){
+
+        sceneService.startScene(sceneRequestDTO);
 
         return ResponseEntity.ok().build();
     }
+    @PostMapping("/login")
+    public ResponseEntity<Void> loginScene(@RequestBody LoginSceneDTO loginSceneDTO)
+    {
+        sceneService.loginScene(loginSceneDTO);
 
-    //TODO login endpointi yap. input olarak sceneName ve password alacak. Eğer bilgiler uyuşuyorsa 200, uyuşmuyorsa bad request
+        return ResponseEntity.ok().build();
+    }
+    @PostMapping("/type")
+    public ResponseEntity<List<SceneResponseDTO>> getActiveScenesByType(@RequestBody SceneByTypeRequestDTO sceneByTypeRequestDTO){
+        return ResponseEntity.ok(sceneService.getActiveScenesByType(sceneByTypeRequestDTO));
+    }
 
-    //todo get scenes by scene type (only active ones)
+
+
+
+
+
 
 }

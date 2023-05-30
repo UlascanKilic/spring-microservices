@@ -1,7 +1,6 @@
 package com.ulascan.serverservice.controller;
 
-import com.ulascan.serverservice.dto.ServerCountDTO;
-import com.ulascan.serverservice.dto.ServerDTO;
+import com.ulascan.serverservice.dto.ServerRequestDTO;
 import com.ulascan.serverservice.dto.ServerResponseDTO;
 import com.ulascan.serverservice.service.ServerService;
 import lombok.RequiredArgsConstructor;
@@ -18,14 +17,14 @@ public class ServerController {
     private final ServerService serverService;
 
     @GetMapping
-    public ResponseEntity<List<ServerDTO>> getAllServerStatus(){
+    public ResponseEntity<List<ServerRequestDTO>> getAllServerStatus(){
         return ResponseEntity.ok(serverService.getAllServers());
     }
 
     @PostMapping
-    public ResponseEntity<ServerResponseDTO> setServer(@RequestBody ServerDTO serverDTO)
+    public ResponseEntity<ServerResponseDTO> setServer(@RequestBody ServerRequestDTO serverRequestDTO)
     {
-         return ResponseEntity.ok(serverService.setServer(serverDTO));
+         return ResponseEntity.ok(serverService.setServer(serverRequestDTO));
     }
 
     /*@PostMapping("/count")
@@ -35,7 +34,7 @@ public class ServerController {
     }*/
 
     @GetMapping("/{serverName}")
-    public ResponseEntity<ServerDTO> getServerByName(@PathVariable(value = "serverName") String serverName) {
+    public ResponseEntity<ServerRequestDTO> getServerByName(@PathVariable(value = "serverName") String serverName) {
         return ResponseEntity.ok(serverService.getServerByName(serverName));
     }
 

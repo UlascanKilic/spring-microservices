@@ -1,5 +1,6 @@
 package com.ulascan.serverservice.dto;
 
+import com.ulascan.serverservice.enums.SceneType;
 import lombok.*;
 
 @Getter
@@ -14,10 +15,10 @@ public class SceneResponseDTO {
     private String hostFirstName;
     private String hostLastName;
     private String hostEmail;
-    //todo host email
     private String port;
 
-    private boolean isDefaultScene;
+    private SceneType sceneType;
+
     private boolean isPrivateScene;
 
     private int userCount;

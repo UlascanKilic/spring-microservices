@@ -1,14 +1,13 @@
 package com.ulascan.serverservice.utils;
 
 import com.ulascan.serverservice.dto.ServerCountDTO;
-import com.ulascan.serverservice.dto.ServerDTO;
-import com.ulascan.serverservice.dto.StartSceneDTO;
+import com.ulascan.serverservice.dto.ServerRequestDTO;
+import com.ulascan.serverservice.dto.SceneRequestDTO;
 import com.ulascan.serverservice.entity.Scene;
 import com.ulascan.serverservice.entity.Server;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.modelmapper.PropertyMap;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -38,25 +37,25 @@ public class Mapper {
         }
     };*/
 
-    public Scene dtoToEntity(StartSceneDTO startSceneDTO, Scene scene)
+    public Scene dtoToEntity(SceneRequestDTO sceneRequestDTO, Scene scene)
     {
         this.modelMapper.getConfiguration().setSkipNullEnabled(true);
         modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
-        this.modelMapper.map(startSceneDTO, scene);
+        this.modelMapper.map(sceneRequestDTO, scene);
         scene.setActive(false);
         scene.setServer(null);
-        scene.setPrivateScene(scene.getScenePassword().isEmpty());
+        scene.setPrivateScene(!scene.getScenePassword().isEmpty());
         return scene;
 
     }
 
-    public Server dtoToEntity(ServerDTO serverDTO, Server server) {
+    public Server dtoToEntity(ServerRequestDTO serverRequestDTO, Server server) {
         this.modelMapper.getConfiguration().setSkipNullEnabled(true);
         modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
 
-        this.modelMapper.map(serverDTO, server);
+        this.modelMapper.map(serverRequestDTO, server);
 
-        server.setPort(serverDTO.getServerName().substring(serverDTO.getServerName().length() - 4));
+        server.setPort(serverRequestDTO.getServerName().substring(serverRequestDTO.getServerName().length() - 4));
 
         //server.setFull(serverDTO.getUserCount() >= server.getScene().getMaxUserCapacity());
         return server;
@@ -71,7 +70,7 @@ public class Mapper {
         return server;
     }
 
-    public ServerDTO entityToDTO(Server server) {
-        return modelMapper.map(server, ServerDTO.class);
+    public ServerRequestDTO entityToDTO(Server server) {
+        return modelMapper.map(server, ServerRequestDTO.class);
     }
 }

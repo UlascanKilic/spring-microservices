@@ -1,18 +1,16 @@
 package com.ulascan.serverservice.service;
 
-import com.ulascan.serverservice.dto.ServerCountDTO;
-import com.ulascan.serverservice.dto.ServerDTO;
+import com.ulascan.serverservice.dto.ServerRequestDTO;
 import com.ulascan.serverservice.dto.ServerResponseDTO;
 import com.ulascan.serverservice.entity.Scene;
 import com.ulascan.serverservice.entity.Server;
-import com.ulascan.serverservice.enums.DefaultUnityScenes;
+import com.ulascan.serverservice.enums.SceneType;
 import com.ulascan.serverservice.enums.UnitySceneName;
 import com.ulascan.serverservice.exception.BadRequestException;
 import com.ulascan.serverservice.exception.Error;
 import com.ulascan.serverservice.repository.SceneRepository;
 import com.ulascan.serverservice.repository.ServerRepository;
 import com.ulascan.serverservice.utils.Mapper;
-import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -38,22 +36,22 @@ public class ServerService {
     private boolean defaultIsUp;
 
 
-    public List<ServerDTO> getAllServers() {
-        return mapper.mapList(serverRepository.findAll(), ServerDTO.class);
+    public List<ServerRequestDTO> getAllServers() {
+        return mapper.mapList(serverRepository.findAll(), ServerRequestDTO.class);
     }
 
     @Transactional
-    public ServerResponseDTO setServer(ServerDTO serverDTO) {
+    public ServerResponseDTO setServer(ServerRequestDTO serverRequestDTO) {
 
-        Server server = serverRepository.findByServerName(serverDTO.getServerName());
+        Server server = serverRepository.findByServerName(serverRequestDTO.getServerName());
         Scene scene = sceneRepository.findFirstByActiveFalse();
-        ServerResponseDTO responseDTO = ServerResponseDTO.builder().unitySceneName(serverDTO.getUnitySceneName()).build();
+        ServerResponseDTO responseDTO = ServerResponseDTO.builder().unitySceneName(serverRequestDTO.getUnitySceneName()).build();
 
-        server = mapper.dtoToEntity(serverDTO, Objects.requireNonNullElseGet(server, Server::new));
+        server = mapper.dtoToEntity(serverRequestDTO, Objects.requireNonNullElseGet(server, Server::new));
         //2: sahne ayrlarını yap
 
         //TODO öncelik default scene varsa onun
-        if(scene != null && serverDTO.getUnitySceneName().equals(UnitySceneName.IDLE_SCENE.getSceneName()) && server.getScene() == null)
+        if(scene != null && serverRequestDTO.getUnitySceneName().equals(UnitySceneName.IDLE_SCENE.getSceneName()) && server.getScene() == null)
         {
             responseDTO.setUnitySceneName(scene.getUnitySceneName());
             scene.setActive(true);
@@ -61,12 +59,12 @@ public class ServerService {
             scene.setServer(server);
 
         }
-        if(!Objects.equals(serverDTO.getUnitySceneName(), UnitySceneName.IDLE_SCENE.name()) && server.getScene() == null)
+        if(!Objects.equals(serverRequestDTO.getUnitySceneName(), UnitySceneName.IDLE_SCENE.name()) && server.getScene() == null)
         {
             //sen idle'sın idle dön
             responseDTO.setUnitySceneName(UnitySceneName.IDLE_SCENE.getSceneName());
         }
-        else if(Objects.equals(serverDTO.getUnitySceneName(), UnitySceneName.IDLE_SCENE.name()) && server.getScene() != null)
+        else if(Objects.equals(serverRequestDTO.getUnitySceneName(), UnitySceneName.IDLE_SCENE.name()) && server.getScene() != null)
         {
             responseDTO.setUnitySceneName(UnitySceneName.IDLE_SCENE.getSceneName());
 
@@ -99,7 +97,7 @@ public class ServerService {
         return null;
     }*/
 
-    public ServerDTO getServerByName(String serverName) {
+    public ServerRequestDTO getServerByName(String serverName) {
         Server server = serverRepository.findByServerName(serverName);
 
         if(server == null) throw new BadRequestException(Error.SERVER_DOESNT_EXIST.getErrorCode(), Error.SERVER_DOESNT_EXIST.getErrorMessage());
@@ -128,11 +126,14 @@ public class ServerService {
     public void deleteSceneByServerName(String serverName) {
         Scene scene = sceneRepository.findByServerServerName(serverName);
         Server server = scene.getServer();
-        //TODO eğer silinen scene isDefaultScene ise delete yapma, active ini sil
         server.setScene(null);
         scene.setActive(false);
 
-        if(!scene.isDefaultScene())
+        if(!(scene.getSceneType() == SceneType.DEFAULT))
             sceneRepository.delete(scene);
+    }
+
+    public boolean findFreeServer() {
+        return serverRepository.findFirstBySceneIsNull().isPresent();
     }
 }

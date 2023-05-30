@@ -21,11 +21,6 @@ public class Server {
 
     private Integer userCount;
 
-    @Value("${entity.default.isup}")
-    private boolean isUp = true;
-
-    private boolean isFull = false;
-
     private String port;
 
     @OneToOne(cascade = CascadeType.ALL)
