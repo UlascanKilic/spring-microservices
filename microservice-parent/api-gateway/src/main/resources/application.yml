@@ -35,14 +35,14 @@ spring:
             - Path=/api/scene/**
 
         - id: discovery-server
-          uri: http://localhost:8761
+          uri: http://discovery-server:8761
           predicates:
             - Path=/eureka/web
           filters:
             - SetPath=/
 
         - id: discovery-server-static
-          uri: http://localhost:8761
+          uri: http://discovery-server:8761
           predicates:
             - Path=/eureka/**
 
@@ -56,18 +56,10 @@ spring:
           expiration: 604800000 # 7 days
 
 
+
 authorization:
   endpoints:
     - path: /api/admin
       method: GET
       authorities:
         - ADMIN
-
-
-
-
-
-eureka:
-  client:
-    service-url:
-      defaultZone : http://localhost:8761/eureka/

@@ -2,12 +2,13 @@ version: "3"
 services:
   ## API GATEWAY
   api-gateway:
-    #    image: organization-service
+    container_name: api-gateway
+    image: starverse/api-gateway:latest
     build:
       context: ./api-gateway
       dockerfile: ../api-gateway/Dockerfile
     ports:
-      - "8080:8080"
+      - "7769:7769"
     networks:
       - eduverse-network
     depends_on:
@@ -78,6 +79,10 @@ services:
     container_name: discovery-server
     ports:
       - "8761:8761"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    networks:
+      - eduverse-network
 
   ## SERVICES
 
@@ -94,6 +99,9 @@ services:
       - postgres-user
       - discovery-server
       - api-gateway
+    networks:
+      - eduverse-network
+
   ## Server-Service Docker Compose Config
   server-service:
     container_name: server-service
@@ -107,6 +115,8 @@ services:
       - postgres-server
       - discovery-server
       - api-gateway
+    networks:
+      - eduverse-network
 
   ## Server-Service Docker Compose Config
   launcher-service:
@@ -121,8 +131,10 @@ services:
       - postgres-launcher
       - discovery-server
       - api-gateway
+    networks:
+      - eduverse-network
 
 
 networks:
   eduverse-network:
-    external: true
+    driver: bridge

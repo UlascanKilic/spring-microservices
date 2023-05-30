@@ -1,4 +1,4 @@
-FROM openjdk:19
+FROM openjdk:17
 
 COPY target/*.jar launcher-service.jar
 
