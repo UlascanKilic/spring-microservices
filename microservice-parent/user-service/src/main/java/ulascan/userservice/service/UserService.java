@@ -19,6 +19,7 @@ import java.util.List;
 @Slf4j
 public class UserService {
 
+    //TODO server userları icin logic??
     private final UserRepository userRepository;
 
     private final Mapper mapper;

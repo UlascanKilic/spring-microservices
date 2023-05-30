@@ -2,20 +2,6 @@ spring:
   cloud:
     gateway:
       routes:
-        - id: product-service
-          uri: lb://product-service
-          predicates:
-            - Path=/api/product/**
-          filters:
-            - JwtAuthorizationFilter
-
-        - id: order-service
-          uri: lb://order-service
-          predicates:
-            - Path=/api/order
-          filters:
-            - JwtAuthorizationFilter
-
         - id: user-service
           uri: lb://user-service
           predicates:
@@ -47,7 +33,6 @@ spring:
           uri: lb://server-service
           predicates:
             - Path=/api/scene/**
-
 
         - id: discovery-server
           uri: http://localhost:8761
