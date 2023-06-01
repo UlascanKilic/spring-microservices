@@ -44,7 +44,7 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.anyList;
 
-public class SceneServiceTest {
+class SceneServiceTest {
 
     @Mock
     private SceneRepository sceneRepository;
@@ -67,7 +67,7 @@ public class SceneServiceTest {
     }
 
     @Test
-    public void testGetAllScenes() {
+    void testGetAllScenes() {
         // Mock the repository to return a list of scenes
         List<Scene> sceneList = new ArrayList<>();
         sceneList.add(new Scene());
@@ -88,7 +88,7 @@ public class SceneServiceTest {
     }
 
     @Test
-    public void testStartScene_WithValidData_ShouldReturnStartSceneResponseDTO() {
+    void testStartScene_WithValidData_ShouldReturnStartSceneResponseDTO() {
         // Arrange
         SceneRequestDTO sceneRequestDTO = new SceneRequestDTO();
         sceneRequestDTO.setUnityScene(UnityScene.ClassroomScene);
@@ -125,7 +125,7 @@ public class SceneServiceTest {
     }
 
     @Test
-    public void testJoinScene_ExistingSceneAndPasswordMatch() {
+    void testJoinScene_ExistingSceneAndPasswordMatch() {
         // Mock the joinSceneDTO
         JoinSceneDTO joinSceneDTO = new JoinSceneDTO();
         joinSceneDTO.setSceneName("TestScene");
@@ -144,7 +144,7 @@ public class SceneServiceTest {
     }
 
     @Test
-    public void testJoinScene_NonExistingScene() {
+    void testJoinScene_NonExistingScene() {
         // Mock the joinSceneDTO
         JoinSceneDTO joinSceneDTO = new JoinSceneDTO();
         joinSceneDTO.setSceneName("NonExistingScene");
@@ -162,7 +162,7 @@ public class SceneServiceTest {
     }
 
     @Test
-    public void testJoinScene_PasswordDoesntMatch() {
+    void testJoinScene_PasswordDoesntMatch() {
         // Mock the joinSceneDTO
         JoinSceneDTO joinSceneDTO = new JoinSceneDTO();
         joinSceneDTO.setSceneName("TestScene");
@@ -182,7 +182,7 @@ public class SceneServiceTest {
     }
 
     @Test
-    public void testGetActiveScenesByType() {
+    void testGetActiveScenesByType() {
         // Mock the dto
         SceneByTypeRequestDTO dto = new SceneByTypeRequestDTO();
         dto.setSceneType(SceneType.DEFAULT);
@@ -247,7 +247,7 @@ public class SceneServiceTest {
     }
 
     @Test
-    public void testFilterChainForStartScene_WhenDuplicateSceneName_ShouldThrowBadRequestException() {
+    void testFilterChainForStartScene_WhenDuplicateSceneName_ShouldThrowBadRequestException() {
         // Arrange
         SceneRequestDTO sceneRequestDTO = new SceneRequestDTO();
         sceneRequestDTO.setSceneName("TestScene");
@@ -263,7 +263,7 @@ public class SceneServiceTest {
     }
 
     @Test
-    public void testFilterChainForStartScene_WhenHostAlreadyExists_ShouldThrowBadRequestException() {
+    void testFilterChainForStartScene_WhenHostAlreadyExists_ShouldThrowBadRequestException() {
         // Arrange
         SceneRequestDTO sceneRequestDTO = new SceneRequestDTO();
         sceneRequestDTO.setHostEmail("john.doe@example.com");
@@ -279,7 +279,7 @@ public class SceneServiceTest {
     }
 
     @Test
-    public void testGetScenesByUser_WithValidData_ShouldReturnSceneResponseDTOList() {
+    void testGetScenesByUser_WithValidData_ShouldReturnSceneResponseDTOList() {
         // Arrange
         String hostEmail = "john.doe@example.com";
         SceneByUserRequestDTO dto = new SceneByUserRequestDTO(hostEmail);
@@ -316,7 +316,7 @@ public class SceneServiceTest {
     }
 
     @Test
-    public void testGetActiveScenesByUnityName_WithValidUnityScene_ShouldReturnSceneResponseDTOList() {
+    void testGetActiveScenesByUnityName_WithValidUnityScene_ShouldReturnSceneResponseDTOList() {
         // Arrange
         SceneByUnityNameRequestDTO requestDTO = new SceneByUnityNameRequestDTO();
         requestDTO.setUnityScene(UnityScene.ClassroomScene);
@@ -351,7 +351,7 @@ public class SceneServiceTest {
     }
 
     @Test
-    public void testGetActiveScenesByUnityName_WithInvalidUnityScene_ShouldReturnEmptyList() {
+    void testGetActiveScenesByUnityName_WithInvalidUnityScene_ShouldReturnEmptyList() {
         // Arrange
         SceneByUnityNameRequestDTO requestDTO = new SceneByUnityNameRequestDTO();
         requestDTO.setUnityScene(null);
@@ -368,7 +368,7 @@ public class SceneServiceTest {
     }
 
     @Test
-    public void testDeleteSceneByServerName_WithValidServerName_ShouldInvokeServerServiceDeleteSceneByServerName() {
+    void testDeleteSceneByServerName_WithValidServerName_ShouldInvokeServerServiceDeleteSceneByServerName() {
         // Arrange
         String serverName = "TestServer";
 
@@ -380,7 +380,7 @@ public class SceneServiceTest {
     }
 
     @Test
-    public void testPostConstruct_WithMissingUnityScenes_ShouldSaveDefaultScenes() {
+    void testPostConstruct_WithMissingUnityScenes_ShouldSaveDefaultScenes() {
 
         Scene mockScene = Scene.builder()
                 .unityScene(UnityScene.GameScene)
@@ -415,7 +415,7 @@ public class SceneServiceTest {
     }
 
     @Test
-    public void testPostConstruct_WithoutMissingUnityScenes_ShouldPass() {
+    void testPostConstruct_WithoutMissingUnityScenes_ShouldPass() {
 
         // Arrange
         List<UnityScene> sceneNameList = DefaultUnityScenes.DEFAULT_UNITY_SCENES.getScenes().stream().toList();
