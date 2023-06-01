@@ -25,7 +25,7 @@
       <module name="api-gateway" options="-parameters --add-modules java.base" />
       <module name="discovery-server" options="-parameters" />
       <module name="inventory-service" options="-parameters" />
-      <module name="launcher-service" options="-parameters" />
+      <module name="launcher-service" options="-parameters --add-modules java.base" />
       <module name="order-service" options="-parameters" />
       <module name="product-service" options="-parameters" />
       <module name="server-service" options="-parameters --add-modules java.base" />
