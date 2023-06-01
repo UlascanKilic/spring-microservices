@@ -69,6 +69,12 @@ public class MailFilter extends AbstractGatewayFilterFactory<MailFilter.Config> 
         });
     }
 
+    /**
+     * Extracts the email field from a JSON body.
+     *
+     * @param jsonBody The JSON body as a String.
+     * @return The extracted email as a String, or null if parsing fails.
+     */
     private String extractEmailFromJson(String jsonBody){
         ObjectMapper objectMapper = new ObjectMapper();
         try {

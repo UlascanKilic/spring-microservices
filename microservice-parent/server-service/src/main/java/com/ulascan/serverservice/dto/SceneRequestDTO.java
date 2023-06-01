@@ -30,9 +30,7 @@ public class SceneRequestDTO {
     @NotNull
     private SceneType sceneType;
 
-    @NotNull
     private int maxUserCapacity;
 
-    @NotNull
     private boolean privateScene;
 }
