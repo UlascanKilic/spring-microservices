@@ -1,7 +1,6 @@
 package com.ulascan.launcherservice.service;
 
 import com.ulascan.launcherservice.dto.LauncherDTO;
-import com.ulascan.launcherservice.dto.LauncherGameDTO;
 import com.ulascan.launcherservice.dto.LauncherTextDTO;
 import com.ulascan.launcherservice.entity.Launcher;
 import com.ulascan.launcherservice.entity.LauncherText;
@@ -11,10 +10,15 @@ import com.ulascan.launcherservice.repository.LauncherRepository;
 import com.ulascan.launcherservice.repository.LauncherTextRepository;
 import com.ulascan.launcherservice.utils.Mapper;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+/**
+ * Service class for managing launchers and launcher text.
+ * Implements the ILauncherService interface.
+ *
+ * @author S. Ulascan Kilic
+ */
 @Service
 @RequiredArgsConstructor
 public class LauncherService implements ILauncherService{
@@ -25,6 +29,13 @@ public class LauncherService implements ILauncherService{
 
     private final Mapper mapper;
 
+    /**
+     * Adds a new launcher to the repository or updates an existing one.
+     * If no launcher exists, a new Launcher object is created with the provided launcher data.
+     * If a launcher exists, it is updated with the provided launcher data.
+     *
+     * @param dto The LauncherDTO object containing the launcher data.
+     */
     @Transactional
     public void addLauncher(LauncherDTO dto) {
 
@@ -48,6 +59,12 @@ public class LauncherService implements ILauncherService{
         launcherRepository.save(launcher);
     }
 
+    /**
+     * Retrieves the launcher from the repository.
+     *
+     * @return The LauncherDTO object containing the launcher data.
+     * @throws BadRequestException if no launcher is found.
+     */
     public LauncherDTO getLauncher() {
         Launcher launcher = launcherRepository.findFirstByOrderById();
 
@@ -56,6 +73,14 @@ public class LauncherService implements ILauncherService{
         return mapper.entityToDTO(launcher);
 
     }
+
+    /**
+     * Sets the launcher text in the repository.
+     * If no launcher text exists, a new LauncherText object is created with the provided text data.
+     * If launcher text exists, it is updated with the provided text data.
+     *
+     * @param dto The LauncherTextDTO object containing the text data.
+     */
     @Transactional
     public void setLauncherText(LauncherTextDTO dto) {
 
@@ -86,7 +111,12 @@ public class LauncherService implements ILauncherService{
         
         launcherTextRepository.save(launcherText);
     }
-
+    /**
+     * Retrieves the launcher text from the repository.
+     *
+     * @return The LauncherTextDTO object containing the launcher text data.
+     * @throws BadRequestException if no launcher text is found.
+     */
     public LauncherTextDTO getLauncherText() {
 
         LauncherText launcherText = launcherTextRepository.findFirstByOrderById();

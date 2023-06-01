@@ -18,6 +18,12 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * Service class for managing scenes in the server.
+ * Implements the ISceneService interface.
+ *
+ * @author S. Ulascan Kilic
+ */
 @Service
 @RequiredArgsConstructor
 public class SceneService implements ISceneService {
@@ -28,6 +34,10 @@ public class SceneService implements ISceneService {
 
     private final Mapper mapper;
 
+    /**
+     * Method executed after the bean initialization.
+     * Checks if default scenes exist in the repository, and if not, creates them.
+     */
     @PostConstruct
     private void postConstruct() {
         List<UnityScene> sceneNameList = sceneRepository.findAllUnitySceneNames();
@@ -51,10 +61,21 @@ public class SceneService implements ISceneService {
         }
     }
 
+    /**
+     * Retrieves all active scenes.
+     *
+     * @return List of SceneResponseDTO objects containing scene data.
+     */
     public List<SceneResponseDTO> getAllScenes() {
         return mapper.mapList(sceneRepository.findByActiveTrue(),SceneResponseDTO.class);
     }
 
+    /**
+     * Starts a scene by creating a new scene in the repository with the provided scene data.
+     *
+     * @param sceneRequestDTO The SceneRequestDTO object containing the scene data.
+     * @return The StartSceneResponseDTO object containing the scene password.
+     */
     @Transactional
     public StartSceneResponseDTO startScene(SceneRequestDTO sceneRequestDTO) {
 
@@ -70,6 +91,12 @@ public class SceneService implements ISceneService {
 
     }
 
+    /**
+     * Joins a scene by verifying the scene name and password.
+     *
+     * @param joinSceneDTO The JoinSceneDTO object containing the scene name and password.
+     * @throws BadRequestException if the scene is not found or the password doesn't match.
+     */
     public void joinScene(JoinSceneDTO joinSceneDTO) {
         Scene scene = sceneRepository.getSceneBySceneName(joinSceneDTO.getSceneName());
 
@@ -85,18 +112,45 @@ public class SceneService implements ISceneService {
 
     }
 
+    /**
+     * Retrieves all active scenes of a specific scene type.
+     *
+     * @param dto The SceneByTypeRequestDTO object containing the scene type.
+     * @return List of SceneResponseDTO objects containing scene data.
+     */
     public List<SceneResponseDTO> getActiveScenesByType(SceneByTypeRequestDTO dto) {
         return mapper.mapList(sceneRepository.findByActiveTrueAndSceneType(dto.getSceneType()),SceneResponseDTO.class);
     }
 
+    /**
+     * Retrieves all scenes hosted by a specific user.
+     *
+     * @param dto The SceneByUserRequestDTO object containing the user's email.
+     * @return List of SceneResponseDTO objects containing scene data.
+     */
     public List<SceneResponseDTO> getScenesByUser(SceneByUserRequestDTO dto)
     {
         return mapper.mapList(sceneRepository.findAllByHostEmail(dto.getHostEmail()),SceneResponseDTO.class);
     }
 
+    /**
+     * Retrieves all active scenes of a specific Unity scene name.
+     *
+     * @param sceneByUnityNameRequestDTO The SceneByUnityNameRequestDTO object containing the Unity scene name.
+     * @return List of SceneResponseDTO objects containing scene data.
+     */
     public List<SceneResponseDTO> getActiveScenesByUnityName(SceneByUnityNameRequestDTO sceneByUnityNameRequestDTO) {
         return mapper.mapList(sceneRepository
                 .findByActiveTrueAndUnityScene(sceneByUnityNameRequestDTO.getUnityScene()), SceneResponseDTO.class);
+    }
+
+    /**
+     * Deletes a scene by the server name.
+     *
+     * @param serverName The name of the server containing the scene to delete.
+     */
+    public void deleteSceneByServerName(String serverName) {
+        serverService.deleteSceneByServerName(serverName);
     }
 
     private boolean checkIfNameExists(String name)
@@ -107,10 +161,13 @@ public class SceneService implements ISceneService {
         return sceneRepository.findByHostEmail(hostEmail).isPresent();
     }
 
-    public void deleteSceneByServerName(String serverName) {
-        serverService.deleteSceneByServerName(serverName);
-    }
-
+    /**
+     * Filters the chain of conditions before starting a scene.
+     * Checks if there is a free server, if the scene name already exists, and if the host already exists.
+     *
+     * @param sceneRequestDTO The SceneRequestDTO object containing the scene data.
+     * @throws BadRequestException if no free server is found, the scene name already exists, or the host already exists.
+     */
     private void filterChainForStartScene(SceneRequestDTO sceneRequestDTO)
     {
         boolean isAnyAvailableServer = serverService.findFreeServer();

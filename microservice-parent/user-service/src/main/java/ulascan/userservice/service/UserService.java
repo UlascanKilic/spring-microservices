@@ -24,6 +24,10 @@ public class UserService implements IUserService{
 
     private final Mapper mapper;
 
+    /**
+     * Retrieves all users.
+     * @return List of UserDTO objects representing all users.
+     */
     public List<UserDTO> getAllUsers(){
         //get all users
         //convert into userDTO
@@ -31,6 +35,12 @@ public class UserService implements IUserService{
         return mapper.mapList(users, UserDTO.class);
     }
 
+    /**
+     * Retrieves a user by ID.
+     * @param userId The ID of the user to retrieve.
+     * @return UserDTO object representing the retrieved user.
+     * @throws BadRequestException if the user doesn't exist.
+     */
     public UserDTO getUserById(Integer userId){
         //Find user by id
         //convert into userDTO
@@ -38,6 +48,11 @@ public class UserService implements IUserService{
         return mapper.entityToDTO(user);
     }
 
+    /**
+     * Updates a user by ID.
+     * @param userId The ID of the user to update.
+     * @param userDTO UserDTO object containing updated user information.
+     */
     public void updateUserById(Integer userId, UserDTO userDTO)
     {
         User user = userById(userId);
@@ -45,6 +60,10 @@ public class UserService implements IUserService{
         userRepository.save(user);
     }
 
+    /**
+     * Deletes a user by ID.
+     * @param userId The ID of the user to delete.
+     */
     public void deleteUserById(Integer userId)
     {
         User user = userById(userId);
@@ -52,6 +71,12 @@ public class UserService implements IUserService{
 
     }
 
+    /**
+     * Retrieves a user by ID.
+     * @param userId The ID of the user to retrieve.
+     * @return User object representing the retrieved user.
+     * @throws BadRequestException if the user doesn't exist.
+     */
     public User userById(Integer userId){
         if(userRepository.findById(userId).isEmpty())
             throw new BadRequestException(Error.USER_DOESNT_EXIST.getErrorCode(), Error.USER_DOESNT_EXIST.getErrorMessage());

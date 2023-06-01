@@ -14,6 +14,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 
+/**
+ * Service class for managing versions in the launcher service.
+ *
+ * @author S. Ulascan Kilic
+ */
 @Service
 @RequiredArgsConstructor
 public class VersionService implements IVersionService{
@@ -21,6 +26,13 @@ public class VersionService implements IVersionService{
     private final VersionRepository versionRepository;
 
     private final Mapper mapper;
+
+    /**
+     * Retrieves the current version from the repository.
+     *
+     * @return The current version as a VersionDTO object.
+     * @throws BadRequestException if no version is found.
+     */
     public VersionDTO getVersion() {
         Version version = versionRepository.findFirstByOrderByVersion();
 
@@ -29,6 +41,13 @@ public class VersionService implements IVersionService{
         return  mapper.entityToDTO(version);
     }
 
+    /**
+     * Sets a new version in the repository.
+     * If no version exists, a new Version object is created with the provided version data.
+     * If a version exists, it is updated with the provided version data.
+     *
+     * @param versionDTO The VersionDTO object containing the new version data.
+     */
     @Transactional
     public void setVersion(VersionDTO versionDTO) {
         Version version = versionRepository.findFirstByOrderByVersion();

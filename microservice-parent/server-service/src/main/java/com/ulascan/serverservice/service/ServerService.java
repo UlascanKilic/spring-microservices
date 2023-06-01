@@ -18,6 +18,11 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * Service class for managing servers and scenes.
+ *
+ * @author S. Ulascan Kilic
+ */
 @Service
 @RequiredArgsConstructor
 public class ServerService implements IServerService{
@@ -28,10 +33,23 @@ public class ServerService implements IServerService{
 
     private final Mapper mapper;
 
+    /**
+     * Retrieves all servers.
+     *
+     * @return A list of ServerRequestDTO objects containing server data.
+     */
     public List<ServerRequestDTO> getAllServers() {
         return mapper.mapList(serverRepository.findAll(), ServerRequestDTO.class);
     }
 
+    /**
+     * Sets the configuration for a server.
+     * If the server exists, updates its configuration with the provided data.
+     * If the server does not exist, creates a new server with the provided data.
+     *
+     * @param serverRequestDTO The ServerRequestDTO object containing server configuration data.
+     * @return A ServerResponseDTO object containing the updated server configuration.
+     */
     @Transactional
     public ServerResponseDTO setServer(ServerRequestDTO serverRequestDTO) {
 
@@ -67,26 +85,13 @@ public class ServerService implements IServerService{
         return responseDTO;
     }
 
-    /*@Transactional
-    public ServerResponseDTO setServerCount(ServerCountDTO serverCountDTO) {
-        Server server = serverRepository.findByServerName(serverCountDTO.getServerName());
-
-
-        if(server == null)
-        {
-            server = Server.builder()
-                    .serverName(serverCountDTO.getServerName())
-                    .userCount(serverCountDTO.getUserCount())
-                    .isUp(defaultIsUp)
-                    .build();
-        }
-        else {
-            server = mapper.dtoToEntity(serverCountDTO, server);
-        }
-        serverRepository.save(server);
-        return null;
-    }*/
-
+    /**
+     * Retrieves a server by its name.
+     *
+     * @param serverName The name of the server.
+     * @return A ServerRequestDTO object containing the server data.
+     * @throws BadRequestException if the server does not exist.
+     */
     public ServerRequestDTO getServerByName(String serverName) {
         Server server = serverRepository.findByServerName(serverName);
 
@@ -95,6 +100,12 @@ public class ServerService implements IServerService{
         return mapper.entityToDTO(server) ;
     }
 
+    /**
+     * Deletes a server by its name.
+     *
+     * @param serverName The name of the server to delete.
+     * @throws BadRequestException if the server does not exist.
+     */
     @Transactional
     public void deleteServerByName(String serverName) {
 
@@ -113,6 +124,11 @@ public class ServerService implements IServerService{
         serverRepository.delete(server);
     }
 
+    /**
+     * Deletes the scene associated with a server by server name.
+     *
+     * @param serverName The name of the server.
+     */
     @Transactional
     public void deleteSceneByServerName(String serverName) {
         Scene scene = sceneRepository.findByServerServerName(serverName);
@@ -130,6 +146,11 @@ public class ServerService implements IServerService{
             sceneRepository.delete(scene);
     }
 
+    /**
+     * Checks if there is any free server available.
+     *
+     * @return true if there is a free server, false otherwise.
+     */
     public boolean findFreeServer() {
         return serverRepository.findFirstBySceneIsNull().isPresent();
     }

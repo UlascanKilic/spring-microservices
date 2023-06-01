@@ -37,6 +37,15 @@ public class AuthenticationService implements IAuthenticationService {
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
 
+    /**
+     * Registers a new user with the provided information.
+     * Generates a random verification code and saves it to the user entity.
+     * Performs user validation and saves the user to the repository.
+     * Generates an access token and a refresh token for the registered user.
+     * @param request RegisterRequestDTO object containing the user registration information.
+     * @return AuthenticationResponseDTO object containing the access token and refresh token.
+     * @throws BadRequestException if the email is already in use.
+     */
     @Transactional
     public AuthenticationResponseDTO register(RegisterRequestDTO request) {
         Map<String, Object> roleClaims = new HashMap<>();
@@ -75,6 +84,14 @@ public class AuthenticationService implements IAuthenticationService {
                 .build();
     }
 
+    /**
+     * Authenticates a user with the provided credentials.
+     * Performs user authentication using the Spring Security authentication manager.
+     * Generates an access token and a refresh token for the authenticated user.
+     * @param request AuthenticationRequestDTO object containing the user's email and password.
+     * @return AuthenticationResponseDTO object containing the access token, refresh token, and user information.
+     * @throws BadRequestException if the user doesn't exist or the password is incorrect.
+     */
     public AuthenticationResponseDTO authenticate(AuthenticationRequestDTO request) {
 
         authenticationManager.authenticate(
@@ -89,7 +106,7 @@ public class AuthenticationService implements IAuthenticationService {
         if(user == null) throw new BadRequestException(Error.USER_DOESNT_EXIST.getErrorCode(), Error.USER_DOESNT_EXIST.getErrorMessage());
 
         //filter chain
-        //TODO UNDO COMMENT LINE
+        //TODO: Uncomment the line below
         //if(!user.isActivated()) throw new BadRequestException(Error.INACTIVE_USER.getErrorCode(), Error.INACTIVE_USER.getErrorMessage());
 
         if(!passwordEncoder.matches(request.getPassword(), user.getPassword()))
@@ -170,6 +187,13 @@ public class AuthenticationService implements IAuthenticationService {
         }
     }
 
+    /**
+     * Verifies the user's account using the provided verification code.
+     * Checks if the verification code matches the stored code and updates the user's activation status.
+     * @param code The verification code to validate.
+     * @return true if the verification is successful, false otherwise.
+     * @throws BadRequestException if the verification code is invalid.
+     */
     @Transactional
     public boolean verify(String code) {
         User user = repository.findByVerificationCode(code);

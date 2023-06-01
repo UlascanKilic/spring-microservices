@@ -28,6 +28,11 @@ public class PasswordService implements IPasswordService{
 
     private final Mapper mapper;
 
+    /**
+     * Initiates the password reset process for a user.
+     * Generates a random code, associates it with the user, and saves it to the database.
+     * @param email EmailDTO object containing the user's email address.
+     */
     @Transactional
     public void forgotPassword(EmailDTO email) {
         User user = userByEmail(email.getEmail());
@@ -41,6 +46,14 @@ public class PasswordService implements IPasswordService{
 
     }
 
+    /**
+     * Resets the password for a user.
+     * Validates the provided password code against the user's stored code.
+     * If the codes match, updates the user's password and clears the reset code.
+     * @param dto ResetPasswordDTO object containing the user's email, password code, and new password.
+     * @return UserDTO object representing the user with the updated password.
+     * @throws BadRequestException if the password code is not found or doesn't match.
+     */
     @Transactional
     public UserDTO resetPassword(ResetPasswordDTO dto){
 
@@ -61,6 +74,12 @@ public class PasswordService implements IPasswordService{
 
     }
 
+    /**
+     * Retrieves a user by email.
+     * @param email The email address of the user to retrieve.
+     * @return User object representing the retrieved user.
+     * @throws BadRequestException if the user doesn't exist.
+     */
     public User userByEmail(String email){
         User user = userRepository.findByEmail(email);
 
