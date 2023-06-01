@@ -44,10 +44,13 @@ public class Mapper {
         this.modelMapper.map(sceneRequestDTO, scene);
         scene.setActive(false);
         scene.setServer(null);
-        //scene.setPrivateScene(sceneRequestDTO.isPrivateScene());
+        scene.setPrivateScene(sceneRequestDTO.isPrivateScene());
         if(scene.isPrivateScene()){
             String password = RandomString.make(5);
             scene.setScenePassword(password);
+        }
+        else{
+            scene.setScenePassword("");
         }
         return scene;
 

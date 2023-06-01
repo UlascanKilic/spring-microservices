@@ -3,6 +3,7 @@ package com.ulascan.serverservice.controller;
 import com.ulascan.serverservice.dto.*;
 import com.ulascan.serverservice.entity.Scene;
 import com.ulascan.serverservice.service.SceneService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,28 +23,30 @@ public class SceneController {
     }
 
     @PostMapping("/user")
-    public ResponseEntity<List<SceneResponseDTO>> getScenesByUser(@RequestBody SceneByUserRequestDTO sceneByUserRequestDTO){
+    public ResponseEntity<List<SceneResponseDTO>> getScenesByUser(@Valid @RequestBody SceneByUserRequestDTO sceneByUserRequestDTO){
         return ResponseEntity.ok(sceneService.getScenesByUser(sceneByUserRequestDTO));
     }
 
     @PostMapping
-        public ResponseEntity<StartSceneResponseDTO> startScene(@RequestBody SceneRequestDTO sceneRequestDTO){
+        public ResponseEntity<StartSceneResponseDTO> startScene(@Valid @RequestBody SceneRequestDTO sceneRequestDTO){
         return ResponseEntity.ok(sceneService.startScene(sceneRequestDTO));
     }
     @PostMapping("/join")
-    public ResponseEntity<Void> joinScene(@RequestBody JoinSceneDTO joinSceneDTO)
+    public ResponseEntity<Void> joinScene(@Valid @RequestBody JoinSceneDTO joinSceneDTO)
     {
         sceneService.joinScene(joinSceneDTO);
 
         return ResponseEntity.ok().build();
     }
     @PostMapping("/type")
-    public ResponseEntity<List<SceneResponseDTO>> getActiveScenesByType(@RequestBody SceneByTypeRequestDTO sceneByTypeRequestDTO){
+    public ResponseEntity<List<SceneResponseDTO>> getActiveScenesByType(@Valid @RequestBody
+                                                                            SceneByTypeRequestDTO sceneByTypeRequestDTO){
         return ResponseEntity.ok(sceneService.getActiveScenesByType(sceneByTypeRequestDTO));
     }
 
     @PostMapping("/unityScene")
-    public ResponseEntity<List<SceneResponseDTO>> getActiveScenesByUnityName(@RequestBody SceneByUnityNameRequestDTO sceneByUnityNameRequestDTO){
+    public ResponseEntity<List<SceneResponseDTO>> getActiveScenesByUnityName(@Valid @RequestBody
+                                                                                 SceneByUnityNameRequestDTO sceneByUnityNameRequestDTO){
         return ResponseEntity.ok(sceneService.getActiveScenesByUnityName(sceneByUnityNameRequestDTO));
     }
 

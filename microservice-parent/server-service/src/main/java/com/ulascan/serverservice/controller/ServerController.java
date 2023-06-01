@@ -3,6 +3,7 @@ package com.ulascan.serverservice.controller;
 import com.ulascan.serverservice.dto.ServerRequestDTO;
 import com.ulascan.serverservice.dto.ServerResponseDTO;
 import com.ulascan.serverservice.service.ServerService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,7 +22,7 @@ public class ServerController {
     }
 
     @PostMapping
-    public ResponseEntity<ServerResponseDTO> setServer(@RequestBody ServerRequestDTO serverRequestDTO)
+    public ResponseEntity<ServerResponseDTO> setServer(@Valid @RequestBody ServerRequestDTO serverRequestDTO)
     {
          return ResponseEntity.ok(serverService.setServer(serverRequestDTO));
     }

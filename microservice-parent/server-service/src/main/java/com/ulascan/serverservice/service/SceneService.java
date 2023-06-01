@@ -39,7 +39,7 @@ public class SceneService implements ISceneService {
      * Checks if default scenes exist in the repository, and if not, creates them.
      */
     @PostConstruct
-    private void postConstruct() {
+    public void postConstruct() {
         List<UnityScene> sceneNameList = sceneRepository.findAllUnitySceneNames();
 
         for(UnityScene sceneName : DefaultUnityScenes.DEFAULT_UNITY_SCENES.getScenes() ){
@@ -88,7 +88,6 @@ public class SceneService implements ISceneService {
                             .dtoToEntity(sceneRequestDTO, Scene.builder().build()))
                     .getScenePassword())
                 .build();
-
     }
 
     /**
@@ -186,5 +185,7 @@ public class SceneService implements ISceneService {
             throw new BadRequestException(Error.HOST_ALREADY_EXISTS.getErrorCode(),
                     Error.HOST_ALREADY_EXISTS.getErrorMessage());
         }
+
+        //check if enums are valid
     }
 }
