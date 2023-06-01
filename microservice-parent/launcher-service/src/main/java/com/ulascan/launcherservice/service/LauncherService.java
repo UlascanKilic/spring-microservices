@@ -17,7 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-public class LauncherService {
+public class LauncherService implements ILauncherService{
 
     private final LauncherRepository launcherRepository;
 

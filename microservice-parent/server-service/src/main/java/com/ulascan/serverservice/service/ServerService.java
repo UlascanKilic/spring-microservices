@@ -20,7 +20,7 @@ import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
-public class ServerService {
+public class ServerService implements IServerService{
 
     private final ServerRepository serverRepository;
 
@@ -42,7 +42,7 @@ public class ServerService {
         server = mapper.dtoToEntity(serverRequestDTO, Objects.requireNonNullElseGet(server, Server::new));
         //2: sahne ayrlarını yap
 
-        if(scene != null && serverRequestDTO.getUnityScene().equals(UnityScene.IDLE_SCENE) && server.getScene() == null)
+        if(scene != null && serverRequestDTO.getUnityScene().equals(UnityScene.IdleScene) && server.getScene() == null)
         {
             responseDTO.setUnityScene(scene.getUnityScene());
             scene.setActive(true);
@@ -50,13 +50,13 @@ public class ServerService {
             scene.setServer(server);
 
         }
-        if(!Objects.equals(responseDTO.getUnityScene(), UnityScene.IDLE_SCENE) && server.getScene() == null)
+        if(!Objects.equals(responseDTO.getUnityScene(), UnityScene.IdleScene) && server.getScene() == null)
         {
-            responseDTO.setUnityScene(UnityScene.IDLE_SCENE);
+            responseDTO.setUnityScene(UnityScene.IdleScene);
         }
-        else if(Objects.equals(responseDTO.getUnityScene(), UnityScene.IDLE_SCENE) && server.getScene() != null)
+        else if(Objects.equals(responseDTO.getUnityScene(), UnityScene.IdleScene) && server.getScene() != null)
         {
-            responseDTO.setUnityScene(UnityScene.IDLE_SCENE);
+            responseDTO.setUnityScene(UnityScene.IdleScene);
 
             //TODO sahneyi sil
 
@@ -101,7 +101,7 @@ public class ServerService {
         Server server = serverRepository.findByServerName(serverName);
 
         if(server == null) throw new BadRequestException(Error.SERVER_DOESNT_EXIST.getErrorCode(), Error.SERVER_DOESNT_EXIST.getErrorMessage());
-        //TODO deleteSceneByServerName ile birelştirip tek fonksiyona indir
+
         if(server.getScene() != null)
         {
             Scene scene = server.getScene();
@@ -117,7 +117,13 @@ public class ServerService {
     public void deleteSceneByServerName(String serverName) {
         Scene scene = sceneRepository.findByServerServerName(serverName);
         Server server = scene.getServer();
-        server.setScene(null);
+
+        if(server != null)
+        {
+            server.setScene(null);
+            serverRepository.save(server);
+        }
+
         scene.setActive(false);
 
         if(!(scene.getSceneType() == SceneType.DEFAULT))

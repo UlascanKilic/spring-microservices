@@ -20,7 +20,7 @@ import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
-public class SceneService {
+public class SceneService implements ISceneService {
 
     private final SceneRepository sceneRepository;
 
@@ -37,14 +37,14 @@ public class SceneService {
                 //open scene
                 sceneRepository.save(Scene.builder()
                         .unityScene(sceneName)
-                        .sceneName("ORTABAHCE")
-                        .scenePassword(Constants.DEFAULT_PASSWORD)
-                        .hostEmail("ytustarverse@gmail.com")
-                        .hostFirstName("YTU")
-                        .hostLastName("Starverse")
+                        .sceneName(Constants.getDefaultSceneName())
+                        .scenePassword(Constants.getDefaultPassword())
+                        .hostEmail(Constants.getDefaultEmail())
+                        .hostFirstName(Constants.getDefaultFirstName())
+                        .hostLastName(Constants.getDefaultLastName())
                         .privateScene(false)
                         .sceneType(SceneType.DEFAULT)
-                        .maxUserCapacity(Constants.MAX_USER_COUNT)
+                        .maxUserCapacity(Constants.getMaxUserCount())
                         .active(false)
                         .build());
             }
@@ -92,6 +92,11 @@ public class SceneService {
     public List<SceneResponseDTO> getScenesByUser(SceneByUserRequestDTO dto)
     {
         return mapper.mapList(sceneRepository.findAllByHostEmail(dto.getHostEmail()),SceneResponseDTO.class);
+    }
+
+    public List<SceneResponseDTO> getActiveScenesByUnityName(SceneByUnityNameRequestDTO sceneByUnityNameRequestDTO) {
+        return mapper.mapList(sceneRepository
+                .findByActiveTrueAndUnityScene(sceneByUnityNameRequestDTO.getUnityScene()), SceneResponseDTO.class);
     }
 
     private boolean checkIfNameExists(String name)

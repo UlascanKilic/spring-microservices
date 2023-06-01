@@ -21,7 +21,7 @@ import ulascan.userservice.utils.RandomString;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class PasswordService {
+public class PasswordService implements IPasswordService{
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;

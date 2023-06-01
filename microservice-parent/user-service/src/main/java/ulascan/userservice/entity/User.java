@@ -22,8 +22,8 @@ public class User implements UserDetails {
     @Id
     @GeneratedValue
     private Integer id;
-    private String firstname;
-    private String lastname;
+    private String firstName;
+    private String lastName;
 
     @Email(message = "Email should be valid")
     private String email;
@@ -43,9 +43,6 @@ public class User implements UserDetails {
     /*@OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "verification_id", referencedColumnName = "id")
     private Verification verification;*/
-
-    @OneToMany(mappedBy = "user")
-    private List<Token> tokens;
 
 
 

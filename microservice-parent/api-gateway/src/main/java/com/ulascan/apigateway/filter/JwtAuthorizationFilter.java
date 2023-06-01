@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 @Component
 
 public class JwtAuthorizationFilter extends AbstractGatewayFilterFactory<JwtAuthorizationFilter.Config> {
-
+//TODO  email validate icin ekstra filter
     @Autowired
     private RouteValidator validator;
     @Autowired

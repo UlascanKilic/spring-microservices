@@ -30,6 +30,17 @@ public class JwtUtil {
         return claims.get("role", String.class);
     }
 
+    public String extractEmailFromJwt(String jwtToken) {
+
+        Claims claims = Jwts
+                .parserBuilder()
+                .setSigningKey(SECRET)
+                .build()
+                .parseClaimsJws(jwtToken)
+                .getBody();
+        return claims.get("sub", String.class);
+    }
+
 
 
     private Key getSignKey() {

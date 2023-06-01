@@ -5,9 +5,9 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public enum UnityScene {
-    GAME_SCENE("GameScene"),
-    IDLE_SCENE("IdleScene"),
-    CLASSROOM_SCENE("ClassroomScene");
+    GameScene("GameScene"),
+    IdleScene("IdleScene"),
+    ClassroomScene("ClassroomScene");
 
     @Getter
     private final String sceneName;

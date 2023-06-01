@@ -16,7 +16,7 @@ public class AuthenticationResponseDTO {
     @JsonProperty("refresh_token")
     private String refreshToken;
 
-    private String firstname;
-    private String lastname;
+    private String firstName;
+    private String lastName;
     private String role;
 }

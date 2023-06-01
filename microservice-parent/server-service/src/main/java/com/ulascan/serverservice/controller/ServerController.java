@@ -13,7 +13,6 @@ import java.util.List;
 @RequestMapping("/api/server")
 @RequiredArgsConstructor
 public class ServerController {
-
     private final ServerService serverService;
 
     @GetMapping

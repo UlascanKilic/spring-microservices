@@ -16,7 +16,7 @@ import java.time.LocalDate;
 
 @Service
 @RequiredArgsConstructor
-public class VersionService {
+public class VersionService implements IVersionService{
 
     private final VersionRepository versionRepository;
 

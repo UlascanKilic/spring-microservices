@@ -8,7 +8,10 @@ services:
       context: ./api-gateway
       dockerfile: ../api-gateway/Dockerfile
     ports:
-      - "7769:7769"
+      - "7770:7770"
+      - "5005:5005"
+    environment:
+      - JAVA_TOOL_OPTIONS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005
     networks:
       - eduverse-network
     depends_on:
@@ -48,8 +51,8 @@ services:
     volumes:
       - ./postgres-server:/data/postgres
     ports:
-      - "5432:5432"
-    command: -p 5432
+      - "5434:5434"
+    command: -p 5434
     restart: always
 
   ## POSTGRES LAUNCHER DB
@@ -110,7 +113,7 @@ services:
       dockerfile: ../server-service/Dockerfile
     image: starverse/server-service:latest
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-server:5432/server-service
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-server:5434/server-service
     depends_on:
       - postgres-server
       - discovery-server

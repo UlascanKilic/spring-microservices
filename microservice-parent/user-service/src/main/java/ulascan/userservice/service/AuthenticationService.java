@@ -30,7 +30,7 @@ import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
-public class AuthenticationService {
+public class AuthenticationService implements IAuthenticationService {
     private final UserRepository repository;
     private final TokenRepository tokenRepository;
     private final PasswordEncoder passwordEncoder;
@@ -47,8 +47,8 @@ public class AuthenticationService {
             throw new BadRequestException(Error.EMAIL_IS_IN_USE.getErrorCode(), Error.EMAIL_IS_IN_USE.getErrorMessage());
 
         User user = User.builder()
-                .firstname(request.getFirstname())
-                .lastname(request.getLastname())
+                .firstName(request.getFirstName())
+                .lastName(request.getLastName())
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
                 .role(Role.USER)
@@ -107,14 +107,14 @@ public class AuthenticationService {
          return AuthenticationResponseDTO.builder()
                  .accessToken(jwtToken)
                  .refreshToken(refreshToken)
-                 .firstname(user.getFirstname())
-                 .lastname(user.getLastname())
+                 .firstName(user.getFirstName())
+                 .lastName(user.getLastName())
                  .role(user.getRole().name())
                  .build();
 
     }
 
-    private void saveUserToken(User user, String jwtToken) {
+    /*private void saveUserToken(User user, String jwtToken) {
         var token = Token.builder()
                 .user(user)
                 .token(jwtToken)
@@ -123,10 +123,10 @@ public class AuthenticationService {
                 .revoked(false)
                 .build();
         tokenRepository.save(token);
-    }
+    }*/
 
 
-    private void revokeAllUserTokens(User user) {
+    /*private void revokeAllUserTokens(User user) {
         var validUserTokens = tokenRepository.findAllValidTokenByUser(user.getId());
         if (validUserTokens.isEmpty())
             return;
@@ -135,7 +135,7 @@ public class AuthenticationService {
             token.setRevoked(true);
         });
         tokenRepository.saveAll(validUserTokens);
-    }
+    }*/
 
     public void refreshToken(
             HttpServletRequest request,

@@ -17,7 +17,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class UserService {
+public class UserService implements IUserService{
 
     //TODO server userları icin logic??
     private final UserRepository userRepository;

@@ -17,7 +17,11 @@ public interface SceneRepository extends JpaRepository<Scene,Integer> {
 
     List<Scene> findByActiveTrueAndSceneType(SceneType sceneType);
 
+    List<Scene> findByActiveTrueAndUnityScene(UnityScene unityScene);
+
     List<Scene> findAllByHostEmail(String hostEmail);
+
+
 
     Scene findByServerServerName(String serverName);
 

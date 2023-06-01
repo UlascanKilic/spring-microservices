@@ -9,7 +9,7 @@ import java.util.Set;
 public enum DefaultUnityScenes {
 
     DEFAULT_UNITY_SCENES(Set.of(
-            UnityScene.GAME_SCENE
+            UnityScene.GameScene
     ));
 
     @Getter

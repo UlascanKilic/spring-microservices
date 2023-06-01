@@ -1,18 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
-    <data-source source="LOCAL" name="@localhost" uuid="0c150233-485c-4399-bb38-db3ed3de2bf8">
+    <data-source source="LOCAL" name="user-service@172.28.0.5" uuid="112ccfb1-f8e4-424e-9b53-4075c3cc1b05">
       <driver-ref>postgresql</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>org.postgresql.Driver</jdbc-driver>
-      <jdbc-url>jdbc:postgresql://localhost:5432/</jdbc-url>
+      <jdbc-url>jdbc:postgresql://172.28.0.5:5431/user-service</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
-    <data-source source="LOCAL" name="server-service@localhost" uuid="19ddfc39-3a72-47e1-aee6-d072c3b0d6a5">
+    <data-source source="LOCAL" name="server-service@172.28.0.3" uuid="a31cbfd0-5742-472d-8e63-be3be4a31e76">
       <driver-ref>postgresql</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>org.postgresql.Driver</jdbc-driver>
-      <jdbc-url>jdbc:postgresql://localhost:5432/server-service</jdbc-url>
+      <jdbc-url>jdbc:postgresql://172.28.0.3:5434/server-service</jdbc-url>
+      <working-dir>$ProjectFileDir$</working-dir>
+    </data-source>
+    <data-source source="LOCAL" name="launcher-service@172.28.0.4" uuid="cdd9eb15-28c8-4611-b4a0-3d47bd51fc46">
+      <driver-ref>postgresql</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>org.postgresql.Driver</jdbc-driver>
+      <jdbc-url>jdbc:postgresql://172.28.0.4:5433/launcher-service</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
   </component>

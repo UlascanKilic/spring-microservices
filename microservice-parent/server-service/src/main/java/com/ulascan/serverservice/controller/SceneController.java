@@ -1,6 +1,7 @@
 package com.ulascan.serverservice.controller;
 
 import com.ulascan.serverservice.dto.*;
+import com.ulascan.serverservice.entity.Scene;
 import com.ulascan.serverservice.service.SceneService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -39,6 +40,11 @@ public class SceneController {
     @PostMapping("/type")
     public ResponseEntity<List<SceneResponseDTO>> getActiveScenesByType(@RequestBody SceneByTypeRequestDTO sceneByTypeRequestDTO){
         return ResponseEntity.ok(sceneService.getActiveScenesByType(sceneByTypeRequestDTO));
+    }
+
+    @PostMapping("/unityScene")
+    public ResponseEntity<List<SceneResponseDTO>> getActiveScenesByUnityName(@RequestBody SceneByUnityNameRequestDTO sceneByUnityNameRequestDTO){
+        return ResponseEntity.ok(sceneService.getActiveScenesByUnityName(sceneByUnityNameRequestDTO));
     }
 
     @DeleteMapping("/close/{serverName}")
