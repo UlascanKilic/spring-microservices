@@ -29,7 +29,7 @@
       <module name="order-service" options="-parameters" />
       <module name="product-service" options="-parameters" />
       <module name="server-service" options="-parameters --add-modules java.base" />
-      <module name="user-service" options="-parameters" />
+      <module name="user-service" options="-parameters --add-modules java.base" />
     </option>
   </component>
 </project>

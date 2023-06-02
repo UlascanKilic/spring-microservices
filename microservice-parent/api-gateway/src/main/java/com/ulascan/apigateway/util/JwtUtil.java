@@ -13,8 +13,8 @@ import java.security.Key;
 public class JwtUtil {
 
 
-    @Value("${application.security.jwt.secret-key}")
-    public static String SECRET;
+    @Value("${SECRET_KEY}")
+    public String SECRET;
 
     /**
      * Validates the given JWT token.

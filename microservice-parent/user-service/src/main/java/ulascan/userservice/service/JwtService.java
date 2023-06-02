@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import ulascan.userservice.utils.Constants;
 
 import java.security.Key;
 import java.util.Date;
@@ -20,12 +21,12 @@ import java.util.stream.Collectors;
 
 @Service
 public class JwtService {
-    @Value("${application.security.jwt.secret-key}")
+    /*@Value("${application.security.jwt.secret-key}")
     private String secretKey;
     @Value("${application.security.jwt.expiration}")
     private long jwtExpiration;
     @Value("${application.security.jwt.refresh-token.expiration}")
-    private long refreshExpiration;
+    private long refreshExpiration;*/
 
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
@@ -44,14 +45,14 @@ public class JwtService {
             Map<String, Object> extraClaims,
             UserDetails userDetails
     ) {
-        return buildToken(extraClaims, userDetails, jwtExpiration);
+        return buildToken(extraClaims, userDetails, Constants.getRefreshExpiration());
     }
 
     public String generateRefreshToken(
             Map<String, Object> extraClaims,
             UserDetails userDetails
     ) {
-        return buildToken(extraClaims, userDetails, refreshExpiration);
+        return buildToken(extraClaims, userDetails, Constants.getRefreshExpiration());
     }
 
     private String buildToken(
@@ -92,7 +93,7 @@ public class JwtService {
     }
 
     private Key getSignInKey() {
-        byte[] keyBytes = Decoders.BASE64.decode(secretKey);
+        byte[] keyBytes = Decoders.BASE64.decode(Constants.getSecretKey());
         return Keys.hmacShaKeyFor(keyBytes);
     }
 

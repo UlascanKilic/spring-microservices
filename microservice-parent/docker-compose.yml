@@ -10,12 +10,29 @@ services:
     ports:
       - "7770:7770"
       - "5005:5005"
+    env_file: ./.env
     environment:
       - JAVA_TOOL_OPTIONS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005
     networks:
       - eduverse-network
     depends_on:
       - discovery-server
+
+  ## Eureka Server
+  discovery-server:
+    build:
+      context: ./discovery-server
+      dockerfile: ../discovery-server/Dockerfile
+    image: starverse/discovery-server:latest
+    container_name: discovery-server
+    ports:
+      - "8761:8761"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    networks:
+      - eduverse-network
+
+  ##DATABASES
 
   ## POSTGRES USER DB
   postgres-user:
@@ -73,19 +90,7 @@ services:
     command: -p 5433
     restart: always
 
-  ## Eureka Server
-  discovery-server:
-    build:
-      context: ./discovery-server
-      dockerfile: ../discovery-server/Dockerfile
-    image: starverse/discovery-server:latest
-    container_name: discovery-server
-    ports:
-      - "8761:8761"
-    environment:
-      - SPRING_PROFILES_ACTIVE=docker
-    networks:
-      - eduverse-network
+
 
   ## SERVICES
 
@@ -98,6 +103,7 @@ services:
     image: starverse/user-service:latest
     environment:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-user:5431/user-service
+    env_file: ./.env
     depends_on:
       - postgres-user
       - discovery-server
