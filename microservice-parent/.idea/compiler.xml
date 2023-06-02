@@ -8,22 +8,28 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="api-gateway" />
-        <module name="product-service" />
-        <module name="order-service" />
-        <module name="inventory-service" />
         <module name="discovery-server" />
         <module name="user-service" />
+        <module name="launcher-service" />
+        <module name="server-service" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="inventory-service" target="19" />
+      <module name="order-service" target="19" />
+      <module name="product-service" target="19" />
+    </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
-      <module name="api-gateway" options="-parameters" />
+      <module name="api-gateway" options="-parameters --add-modules java.base" />
       <module name="discovery-server" options="-parameters" />
       <module name="inventory-service" options="-parameters" />
+      <module name="launcher-service" options="-parameters --add-modules java.base" />
       <module name="order-service" options="-parameters" />
       <module name="product-service" options="-parameters" />
-      <module name="user-service" options="-parameters" />
+      <module name="server-service" options="-parameters --add-modules java.base" />
+      <module name="user-service" options="-parameters --add-modules java.base" />
     </option>
   </component>
 </project>

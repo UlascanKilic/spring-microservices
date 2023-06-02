@@ -4,21 +4,25 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ulascan.userservice.dto.AuthenticationRequestDTO;
 import ulascan.userservice.dto.AuthenticationResponseDTO;
 import ulascan.userservice.dto.RegisterRequestDTO;
-import ulascan.userservice.entity.Role;
-import ulascan.userservice.entity.Token;
-import ulascan.userservice.entity.TokenType;
-import ulascan.userservice.entity.User;
+import ulascan.userservice.entity.*;
+import ulascan.userservice.exception.BadRequestException;
+import ulascan.userservice.exception.Error;
 import ulascan.userservice.repository.TokenRepository;
 import ulascan.userservice.repository.UserRepository;
+import ulascan.userservice.utils.RandomString;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -27,22 +31,47 @@ import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
-public class AuthenticationService {
+public class AuthenticationService implements IAuthenticationService {
     private final UserRepository repository;
     private final TokenRepository tokenRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
 
+    /**
+     * Registers a new user with the provided information.
+     * Generates a random verification code and saves it to the user entity.
+     * Performs user validation and saves the user to the repository.
+     * Generates an access token and a refresh token for the registered user.
+     * @param request RegisterRequestDTO object containing the user registration information.
+     * @return AuthenticationResponseDTO object containing the access token and refresh token.
+     * @throws BadRequestException if the email is already in use.
+     */
+    @Transactional
     public AuthenticationResponseDTO register(RegisterRequestDTO request) {
         Map<String, Object> roleClaims = new HashMap<>();
-        var user = User.builder()
-                .firstname(request.getFirstname())
-                .lastname(request.getLastname())
+
+        String randomCode = RandomString.make(64);
+
+        if(repository.findByEmail(request.getEmail()) != null)
+            throw new BadRequestException(Error.EMAIL_IS_IN_USE.getErrorCode(), Error.EMAIL_IS_IN_USE.getErrorMessage());
+
+        User user = User.builder()
+                .firstName(request.getFirstName())
+                .lastName(request.getLastName())
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
-                .role(request.getRole())
+                .role(Role.USER)
+                .verificationCode(randomCode)
+                .resetPasswordCode("")
+                .activated(false)
+                .isPrivileged(false)
                 .build();
+
+
+        //TODO send mail mailService.sendVerificationEmail(userEntity, "http://193.140.7.178:7769");
+
+        //JWT
         //List<String> roleStrings = jwtService.convertAuthoritiesToStringList((List<SimpleGrantedAuthority>) user.getAuthorities());
         String roleString = String.valueOf(user.getRole());
         roleClaims.put("role", roleString);
@@ -50,13 +79,22 @@ public class AuthenticationService {
         var jwtToken = jwtService.generateToken(roleClaims, user);
         var refreshToken = jwtService.generateRefreshToken(roleClaims,user);
         //saveUserToken(savedUser, jwtToken);
-        return AuthenticationResponseDTO.builder()
+        return  AuthenticationResponseDTO.builder()
                 .accessToken(jwtToken)
                 .refreshToken(refreshToken)
                 .build();
     }
 
+    /**
+     * Authenticates a user with the provided credentials.
+     * Performs user authentication using the Spring Security authentication manager.
+     * Generates an access token and a refresh token for the authenticated user.
+     * @param request AuthenticationRequestDTO object containing the user's email and password.
+     * @return AuthenticationResponseDTO object containing the access token, refresh token, and user information.
+     * @throws BadRequestException if the user doesn't exist or the password is incorrect.
+     */
     public AuthenticationResponseDTO authenticate(AuthenticationRequestDTO request) {
+
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         request.getEmail(),
@@ -64,8 +102,18 @@ public class AuthenticationService {
                 )
         );
         Map<String, Object> roleClaims = new HashMap<>();
-        var user = repository.findByEmail(request.getEmail())
-                .orElseThrow();
+        User user = repository.findByEmail(request.getEmail());
+
+        if(user == null) throw new BadRequestException(Error.USER_DOESNT_EXIST.getErrorCode(), Error.USER_DOESNT_EXIST.getErrorMessage());
+
+        //filter chain
+        //TODO: Uncomment the line below
+        //if(!user.isActivated()) throw new BadRequestException(Error.INACTIVE_USER.getErrorCode(), Error.INACTIVE_USER.getErrorMessage());
+
+        if(!passwordEncoder.matches(request.getPassword(), user.getPassword()))
+            throw new BadRequestException(Error.WRONG_PASSWORD.getErrorCode(), Error.WRONG_PASSWORD.getErrorMessage());
+
+        //JWT
         //List<String> roleStrings = jwtService.convertAuthoritiesToStringList((List<SimpleGrantedAuthority>) user.getAuthorities());
         String roleString = String.valueOf(user.getRole());
         roleClaims.put("role", roleString);
@@ -73,13 +121,18 @@ public class AuthenticationService {
         var refreshToken = jwtService.generateRefreshToken(roleClaims,user);
         //revokeAllUserTokens(user);
         //saveUserToken(user, jwtToken);
-        return AuthenticationResponseDTO.builder()
-                .accessToken(jwtToken)
-                .refreshToken(refreshToken)
-                .build();
+
+         return AuthenticationResponseDTO.builder()
+                 .accessToken(jwtToken)
+                 .refreshToken(refreshToken)
+                 .firstName(user.getFirstName())
+                 .lastName(user.getLastName())
+                 .role(user.getRole().name())
+                 .build();
+
     }
 
-    private void saveUserToken(User user, String jwtToken) {
+    /*private void saveUserToken(User user, String jwtToken) {
         var token = Token.builder()
                 .user(user)
                 .token(jwtToken)
@@ -88,9 +141,10 @@ public class AuthenticationService {
                 .revoked(false)
                 .build();
         tokenRepository.save(token);
-    }
+    }*/
 
-    private void revokeAllUserTokens(User user) {
+
+    /*private void revokeAllUserTokens(User user) {
         var validUserTokens = tokenRepository.findAllValidTokenByUser(user.getId());
         if (validUserTokens.isEmpty())
             return;
@@ -99,7 +153,7 @@ public class AuthenticationService {
             token.setRevoked(true);
         });
         tokenRepository.saveAll(validUserTokens);
-    }
+    }*/
 
     public void refreshToken(
             HttpServletRequest request,
@@ -114,8 +168,10 @@ public class AuthenticationService {
         refreshToken = authHeader.substring(7);
         userEmail = jwtService.extractUsername(refreshToken);
         if (userEmail != null) {
-            var user = this.repository.findByEmail(userEmail)
-                    .orElseThrow();
+            var user = this.repository.findByEmail(userEmail);
+
+            if(user == null) throw new BadRequestException(Error.USER_DOESNT_EXIST.getErrorCode(), Error.USER_DOESNT_EXIST.getErrorMessage());
+
             if (jwtService.isTokenValid(refreshToken, user)) {
                 Map<String, Object> roleClaims = new HashMap<>();
                 List<String> roleStrings = jwtService.convertAuthoritiesToStringList((List<SimpleGrantedAuthority>) user.getAuthorities());
@@ -130,5 +186,29 @@ public class AuthenticationService {
                 new ObjectMapper().writeValue(response.getOutputStream(), authResponse);
             }
         }
+    }
+
+    /**
+     * Verifies the user's account using the provided verification code.
+     * Checks if the verification code matches the stored code and updates the user's activation status.
+     * @param code The verification code to validate.
+     * @return true if the verification is successful, false otherwise.
+     * @throws BadRequestException if the verification code is invalid.
+     */
+    @Transactional
+    public boolean verify(String code) {
+        User user = repository.findByVerificationCode(code);
+
+        if(user == null) throw new BadRequestException(Error.VERIFICATION_DOESNT_EXIST.getErrorCode(), Error.VERIFICATION_DOESNT_EXIST.getErrorMessage());
+
+        if(!user.isActivated() && user.getVerificationCode() != null && user.getVerificationCode().equals(code))
+        {
+            user.setVerificationCode(null);
+            user.setActivated(true);
+            repository.save(user);
+
+            return true;
+        }
+        return false;
     }
 }
