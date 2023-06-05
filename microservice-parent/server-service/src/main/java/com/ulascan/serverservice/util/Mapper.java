@@ -1,4 +1,4 @@
-package com.ulascan.serverservice.utils;
+package com.ulascan.serverservice.util;
 
 import com.ulascan.serverservice.dto.ServerCountDTO;
 import com.ulascan.serverservice.dto.ServerRequestDTO;

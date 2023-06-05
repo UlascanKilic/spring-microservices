@@ -10,7 +10,7 @@ import com.ulascan.serverservice.exception.BadRequestException;
 import com.ulascan.serverservice.exception.Error;
 import com.ulascan.serverservice.repository.SceneRepository;
 import com.ulascan.serverservice.repository.ServerRepository;
-import com.ulascan.serverservice.utils.Mapper;
+import com.ulascan.serverservice.util.Mapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

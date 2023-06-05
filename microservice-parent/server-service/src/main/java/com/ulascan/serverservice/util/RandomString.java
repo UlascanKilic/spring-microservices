@@ -1,4 +1,4 @@
-package com.ulascan.serverservice.utils;
+package com.ulascan.serverservice.util;
 
 import java.util.Random;
 

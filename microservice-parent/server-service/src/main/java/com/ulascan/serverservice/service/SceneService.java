@@ -8,8 +8,8 @@ import com.ulascan.serverservice.enums.UnityScene;
 import com.ulascan.serverservice.exception.BadRequestException;
 import com.ulascan.serverservice.exception.Error;
 import com.ulascan.serverservice.repository.SceneRepository;
-import com.ulascan.serverservice.utils.Constants;
-import com.ulascan.serverservice.utils.Mapper;
+import com.ulascan.serverservice.util.Constants;
+import com.ulascan.serverservice.util.Mapper;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -79,7 +79,7 @@ public class SceneService implements ISceneService {
     @Transactional
     public StartSceneResponseDTO startScene(SceneRequestDTO sceneRequestDTO) {
 
-        filterChainForStartScene(sceneRequestDTO);
+        filterChainForStartScene(sceneRequestDTO); //TODO: validate all scenes by scene type
 
         return StartSceneResponseDTO
                 .builder()
