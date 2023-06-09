@@ -14,7 +14,6 @@ public class EventRequestDTO extends SceneRequestDTO {
     String eventName; //unique
     String organizerName;
     String date;
-    String scenePassword; //TODO batuyla konus gerek var mi
     String description;
 
     byte[] eventImage;

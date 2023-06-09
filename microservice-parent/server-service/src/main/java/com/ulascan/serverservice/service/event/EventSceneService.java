@@ -131,11 +131,7 @@ public class EventSceneService extends AbstractSceneService {
             throw new BadRequestException(Error.DUPLICATE_SCENE_NAME.getErrorCode(),
                     Error.DUPLICATE_SCENE_NAME.getErrorMessage());
         }
-        else if(getScenePassword(requestDTO.getScenePassword()) != null)
-        {
-            throw new BadRequestException(Error.DUPLICATE_SCENE_NAME.getErrorCode(),
-                    Error.DUPLICATE_SCENE_NAME.getErrorMessage());
-        }
+
     }
 
     private void setEventLive(String eventName ,boolean isLive){

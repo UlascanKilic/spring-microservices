@@ -116,10 +116,6 @@ public class SessionSceneService extends AbstractSceneService {
             throw new BadRequestException(Error.DUPLICATE_SCENE_NAME.getErrorCode(),
                     Error.DUPLICATE_SCENE_NAME.getErrorMessage());
         }
-        else if(getScenePassword(dto.getScenePassword()) != null)
-        {
-            throw new BadRequestException(Error.DUPLICATE_SCENE_NAME.getErrorCode(),
-                    Error.DUPLICATE_SCENE_NAME.getErrorMessage());
-        }
+
     }
 }

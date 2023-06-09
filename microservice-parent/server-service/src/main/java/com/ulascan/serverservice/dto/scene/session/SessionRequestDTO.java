@@ -15,7 +15,6 @@ public class SessionRequestDTO extends SceneRequestDTO {
      String lecturerFirstName;
      String lecturerLastName;
      String lecturerEmail;
-     String scenePassword; //TODO batuyla konus gerek var mi
      String lessonCode;
      String sessionName; //unique
 
