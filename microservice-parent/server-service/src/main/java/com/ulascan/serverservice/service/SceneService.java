@@ -33,11 +33,6 @@ public class SceneService implements ISceneService{
 
     private final ModelConverter modelConverter;
 
-    private final EnvironmentSceneService environmentService;
-
-    private final SessionSceneService sessionService;
-
-    private final EventSceneService eventService;
 
     private final SceneServiceProvider sceneServiceProvider;
 
