@@ -12,7 +12,9 @@ import com.ulascan.serverservice.util.exception.Error;
 import com.ulascan.serverservice.repository.SceneRepository;
 import com.ulascan.serverservice.repository.ServerRepository;
 import com.ulascan.serverservice.util.mapper.ModelConverter;
+import jakarta.persistence.LockModeType;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.jpa.repository.Lock;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,7 +28,7 @@ import java.util.Objects;
  */
 @Service
 @RequiredArgsConstructor
-public class ServerService implements IServerService{
+public class ServerService implements IServerService {
 
     private final ServerRepository serverRepository;
 
@@ -52,6 +54,7 @@ public class ServerService implements IServerService{
      * @return A ServerResponseDTO object containing the updated server configuration.
      */
     @Transactional
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
     public ServerResponseDTO setServer(ServerRequestDTO serverRequestDTO) {
 
         Server server = serverRepository.findByServerName(serverRequestDTO.getServerName());
@@ -63,20 +66,16 @@ public class ServerService implements IServerService{
         server = modelConverter.dtoToEntity(serverRequestDTO, Objects.requireNonNullElseGet(server, Server::new));
         //2: sahne ayrlarını yap
 
-        if(scene != null && serverRequestDTO.getUnityScene().equals(UnityScene.IdleScene) && server.getScene() == null)
-        {
+        if (scene != null && serverRequestDTO.getUnityScene().equals(UnityScene.IdleScene) && server.getScene() == null) {
             responseDTO.setUnityScene(scene.getUnitySceneName());
             scene.setActive(true);
             server.setScene(scene);
             scene.setServer(server);
 
         }
-        if(!Objects.equals(responseDTO.getUnityScene(), UnityScene.IdleScene) && server.getScene() == null)
-        {
+        if (!Objects.equals(responseDTO.getUnityScene(), UnityScene.IdleScene) && server.getScene() == null) {
             responseDTO.setUnityScene(UnityScene.IdleScene);
-        }
-        else if(Objects.equals(responseDTO.getUnityScene(), UnityScene.IdleScene) && server.getScene() != null)
-        {
+        } else if (Objects.equals(responseDTO.getUnityScene(), UnityScene.IdleScene) && server.getScene() != null) {
             responseDTO.setUnityScene(UnityScene.IdleScene);
 
             //TODO sahneyi sil
@@ -98,9 +97,10 @@ public class ServerService implements IServerService{
     public ServerRequestDTO getServerByName(String serverName) {
         Server server = serverRepository.findByServerName(serverName);
 
-        if(server == null) throw new BadRequestException(Error.SERVER_DOESNT_EXIST.getErrorCode(), Error.SERVER_DOESNT_EXIST.getErrorMessage());
+        if (server == null)
+            throw new BadRequestException(Error.SERVER_DOESNT_EXIST.getErrorCode(), Error.SERVER_DOESNT_EXIST.getErrorMessage());
 
-        return modelConverter.entityToDTO(server) ;
+        return modelConverter.entityToDTO(server);
     }
 
     /**
@@ -114,10 +114,10 @@ public class ServerService implements IServerService{
 
         Server server = serverRepository.findByServerName(serverName);
 
-        if(server == null) throw new BadRequestException(Error.SERVER_DOESNT_EXIST.getErrorCode(), Error.SERVER_DOESNT_EXIST.getErrorMessage());
+        if (server == null)
+            throw new BadRequestException(Error.SERVER_DOESNT_EXIST.getErrorCode(), Error.SERVER_DOESNT_EXIST.getErrorMessage());
 
-        if(server.getScene() != null)
-        {
+        if (server.getScene() != null) {
             Scene scene = server.getScene();
             scene.setActive(false);
             scene.setServer(null);
@@ -139,8 +139,7 @@ public class ServerService implements IServerService{
         Scene scene = new Scene(); //TODO düzelt
         Server server = scene.getServer();
 
-        if(server != null)
-        {
+        if (server != null) {
             server.setScene(null);
             serverRepository.save(server);
         }
@@ -160,3 +159,4 @@ public class ServerService implements IServerService{
         return serverRepository.findFirstBySceneIsNull().isPresent();
     }
 }
+

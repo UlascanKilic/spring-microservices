@@ -15,6 +15,8 @@ services:
       - JAVA_TOOL_OPTIONS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005
     depends_on:
       - discovery-server
+    networks:
+      - eduverse-network
 
   ## Eureka Server
   discovery-server:
@@ -27,6 +29,8 @@ services:
       - "8761:8761"
     environment:
       - SPRING_PROFILES_ACTIVE=docker
+    networks:
+      - eduverse-network
   ##DATABASES
 
   ## POSTGRES USER DB
@@ -46,6 +50,8 @@ services:
       - "5431:5431"
     command: -p 5431
     restart: always
+    networks:
+      - eduverse-network
 
   ## POSTGRES SERVER DB
   postgres-server:
@@ -62,6 +68,8 @@ services:
       - "5434:5434"
     command: -p 5434
     restart: always
+    networks:
+      - eduverse-network
 
   ## POSTGRES LAUNCHER DB
   postgres-launcher:
@@ -78,6 +86,8 @@ services:
       - "5433:5433"
     command: -p 5433
     restart: always
+    networks:
+      - eduverse-network
 
 
 
@@ -97,6 +107,8 @@ services:
       - postgres-user
       - discovery-server
       - api-gateway
+    networks:
+      - eduverse-network
 
   ## Server-Service Docker Compose Config
   server-service:
@@ -115,6 +127,8 @@ services:
       - postgres-server
       - discovery-server
       - api-gateway
+    networks:
+      - eduverse-network
 
   ## Server-Service Docker Compose Config
   launcher-service:
@@ -130,6 +144,8 @@ services:
       - postgres-launcher
       - discovery-server
       - api-gateway
+    networks:
+      - eduverse-network
 
   ## Prometheus
   prometheus:
@@ -162,3 +178,6 @@ services:
 
 
 
+networks:
+  eduverse-network:
+    external: true

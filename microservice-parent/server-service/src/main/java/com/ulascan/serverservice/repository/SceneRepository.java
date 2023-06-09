@@ -15,7 +15,6 @@ public interface SceneRepository extends JpaRepository<Scene,Integer> {
 
     Scene findFirstByActiveFalseOrderBySceneTypeAsc();
 
-    Scene findByScenePassword(String scenePassword);
 
     /*List<Scene> findByActiveTrue();
 

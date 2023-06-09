@@ -19,5 +19,5 @@ public class EventRequestDTO extends SceneRequestDTO {
     byte[] eventImage;
 
     boolean isLive; //false default. 
-    boolean isPrivate;
+    boolean isPrivateScene;
 }

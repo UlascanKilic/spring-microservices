@@ -10,20 +10,25 @@ import com.ulascan.serverservice.enums.SceneType;
 import com.ulascan.serverservice.enums.UnityScene;
 import com.ulascan.serverservice.repository.IEnvironmentRepository;
 import com.ulascan.serverservice.service.AbstractSceneService;
-import com.ulascan.serverservice.util.Constants;
 import com.ulascan.serverservice.util.mapper.ModelConverter;
 import jakarta.annotation.PostConstruct;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
-@RequiredArgsConstructor
 public class EnvironmentSceneService extends AbstractSceneService {
 
     private final IEnvironmentRepository repository;
     private final ModelConverter modelConverter;
+
+    @Autowired
+    public EnvironmentSceneService(IEnvironmentRepository repository,
+                               ModelConverter modelConverter){
+        this.repository = repository;
+        this.modelConverter = modelConverter;
+    }
 
     @PostConstruct
     public void postConstruct() {

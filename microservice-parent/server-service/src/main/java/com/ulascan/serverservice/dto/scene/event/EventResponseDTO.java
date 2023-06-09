@@ -14,7 +14,7 @@ public class EventResponseDTO extends SceneResponseDTO {
     private String description;
 
     private boolean isLive;
-    private boolean isPrivate;
+    private boolean isPrivateScene;
 
     private byte[] eventImage;
 }

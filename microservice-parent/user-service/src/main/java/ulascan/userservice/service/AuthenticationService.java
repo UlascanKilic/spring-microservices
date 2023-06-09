@@ -64,7 +64,7 @@ public class AuthenticationService implements IAuthenticationService {
                 .role(Role.USER)
                 .verificationCode(randomCode)
                 .resetPasswordCode("")
-                .activated(false)
+                .activated(true) //TODO DEGİS
                 .isPrivileged(false)
                 .build();
 

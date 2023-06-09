@@ -6,9 +6,7 @@ import com.ulascan.serverservice.dto.scene.session.SessionRequestDTO;
 import com.ulascan.serverservice.dto.scene.session.SessionResponseDTO;
 import com.ulascan.serverservice.dto.server.ServerCountDTO;
 import com.ulascan.serverservice.dto.server.ServerRequestDTO;
-import com.ulascan.serverservice.dto.scene.SceneRequestDTO;
 import com.ulascan.serverservice.entity.EventEntity;
-import com.ulascan.serverservice.entity.Scene;
 import com.ulascan.serverservice.entity.Server;
 import com.ulascan.serverservice.entity.SessionEntity;
 import com.ulascan.serverservice.enums.SceneType;
@@ -76,7 +74,7 @@ public class ModelConverter implements IModelConverter {
         event.setServer(null);
         event.setSceneType(SceneType.EVENT);
 
-        event.setPrivateScene(sceneRequestDTO.isPrivate());
+        event.setPrivateScene(sceneRequestDTO.isPrivateScene());
 
         if(event.isPrivateScene()){
             String password = RandomString.make(5);
@@ -133,7 +131,7 @@ public class ModelConverter implements IModelConverter {
         sessionEntity.setServer(null);
         sessionEntity.setSceneType(SceneType.SESSION);
 
-        sessionEntity.setPrivateScene(sessionRequestDTO.isPrivate());
+        sessionEntity.setPrivateScene(sessionRequestDTO.isPrivateScene());
 
         if(sessionEntity.isPrivateScene()){
             String password = RandomString.make(6); //TODO şifre uzunluğunu constanttan al

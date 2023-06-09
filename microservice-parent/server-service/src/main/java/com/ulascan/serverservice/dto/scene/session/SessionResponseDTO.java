@@ -14,5 +14,5 @@ public class SessionResponseDTO extends SceneResponseDTO {
     private String lessonCode;
     private String sessionName; //unique
 
-    private boolean isPrivate;
+    private boolean isPrivateScene;
 }

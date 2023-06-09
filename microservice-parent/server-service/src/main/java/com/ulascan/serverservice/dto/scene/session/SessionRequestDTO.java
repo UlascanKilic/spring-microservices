@@ -18,5 +18,5 @@ public class SessionRequestDTO extends SceneRequestDTO {
      String lessonCode;
      String sessionName; //unique
 
-     boolean isPrivate;
+     boolean isPrivateScene;
 }
