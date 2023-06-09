@@ -1,7 +1,7 @@
 package com.ulascan.serverservice.service;
 
-import com.ulascan.serverservice.dto.ServerRequestDTO;
-import com.ulascan.serverservice.dto.ServerResponseDTO;
+import com.ulascan.serverservice.dto.server.ServerRequestDTO;
+import com.ulascan.serverservice.dto.server.ServerResponseDTO;
 
 public interface IServerService {
     ServerResponseDTO setServer(ServerRequestDTO serverRequestDTO);

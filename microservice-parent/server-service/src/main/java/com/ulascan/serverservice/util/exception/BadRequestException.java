@@ -1,4 +1,4 @@
-package com.ulascan.serverservice.exception;
+package com.ulascan.serverservice.util.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;

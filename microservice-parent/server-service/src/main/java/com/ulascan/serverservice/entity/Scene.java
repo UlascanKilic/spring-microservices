@@ -11,26 +11,20 @@ import org.springframework.beans.factory.annotation.Value;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Builder
 @Table(name = "scene")
+@Inheritance(strategy = InheritanceType.JOINED)
 public class Scene {
     @Id
     @GeneratedValue
     private Integer id;
 
-    private UnityScene unityScene; //enum yap
-    private String sceneName;
-    private String scenePassword;
-    private String hostEmail;
-    private String hostFirstName;
-    private String hostLastName;
+    public UnityScene unitySceneName;
 
     private int maxUserCapacity;
 
     @Enumerated(EnumType.ORDINAL)
     private SceneType sceneType;
 
-    private boolean privateScene;
     private boolean active;
 
     @OneToOne(mappedBy = "scene")

@@ -1,4 +1,4 @@
-package com.ulascan.serverservice.dto;
+package com.ulascan.serverservice.dto.scene;
 
 import com.ulascan.serverservice.enums.SceneType;
 import jakarta.validation.constraints.NotNull;

@@ -22,7 +22,15 @@ public class Constants {
     private static String defaultSceneName;
 
     @Getter
+    private static String defaultDescription;
+
+    @Getter
     private static int maxUserCount;
+
+    @Value("${entity.default.description}")
+    public void setDefaultDescription(String description) {
+        Constants.defaultDescription = description;
+    }
 
     @Value("${entity.default.password}")
     public void setDefaultPassword(String password){Constants.defaultPassword = password; }

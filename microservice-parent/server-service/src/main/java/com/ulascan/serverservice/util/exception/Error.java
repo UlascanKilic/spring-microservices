@@ -1,4 +1,4 @@
-package com.ulascan.serverservice.exception;
+package com.ulascan.serverservice.util.exception;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +16,11 @@ public enum Error {
     SCENE_NOT_FOUND("sceneNotFound", "There isn't a scene with those credentials"),
     SCENE_PASSWORD_DOESNT_MATCH("scenePasswordDoesntMatch", "Scene password doesnt match"),
     DUPLICATE_SCENE_NAME("duplicateSceneName", "This scene name is already taken"),
-    HOST_ALREADY_EXISTS("hostAlreadyExists", "The host already has a scene");
+    HOST_ALREADY_EXISTS("hostAlreadyExists", "The host already has a scene"),
+    EVENT_NOT_FOUND("eventNotFound", "There isn't a event with those credentials"),
+    EVENT_IS_NOT_LIVE("eventIsNotLive", "Event is not live"),
+    SESSION_IS_NOT_ACTIVE("sessionIsNotActive", "Session is not active"),
+    SESSION_NOT_FOUND("sessionNotFound", "There isn't a session with those credentials");
 
 
     private final String errorCode;

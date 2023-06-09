@@ -1,4 +1,4 @@
-package com.ulascan.serverservice.dto;
+package com.ulascan.serverservice.dto.scene;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.*;

@@ -1,7 +1,7 @@
 package com.ulascan.serverservice.controller;
 
-import com.ulascan.serverservice.dto.*;
-import com.ulascan.serverservice.entity.Scene;
+import com.ulascan.serverservice.dto.scene.*;
+import com.ulascan.serverservice.dto.scene.session.CreateSessionResponseDTO;
 import com.ulascan.serverservice.service.SceneService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -17,18 +17,13 @@ public class SceneController {
 
     private final SceneService sceneService;
 
-    @GetMapping
+   /* @GetMapping
     public ResponseEntity<List<SceneResponseDTO>> getAllScenes() {
         return ResponseEntity.ok(sceneService.getAllScenes());
     }
 
-    @PostMapping("/user")
-    public ResponseEntity<List<SceneResponseDTO>> getScenesByUser(@Valid @RequestBody SceneByUserRequestDTO sceneByUserRequestDTO){
-        return ResponseEntity.ok(sceneService.getScenesByUser(sceneByUserRequestDTO));
-    }
-
     @PostMapping
-        public ResponseEntity<StartSceneResponseDTO> startScene(@Valid @RequestBody SceneRequestDTO sceneRequestDTO){
+        public ResponseEntity<CreateSessionResponseDTO> startScene(@Valid @RequestBody SceneRequestDTO sceneRequestDTO){
         return ResponseEntity.ok(sceneService.startScene(sceneRequestDTO));
     }
     @PostMapping("/join")
@@ -38,15 +33,10 @@ public class SceneController {
 
         return ResponseEntity.ok().build();
     }
-    @PostMapping("/type")
-    public ResponseEntity<List<SceneResponseDTO>> getActiveScenesByType(@Valid @RequestBody
-                                                                            SceneByTypeRequestDTO sceneByTypeRequestDTO){
-        return ResponseEntity.ok(sceneService.getActiveScenesByType(sceneByTypeRequestDTO));
-    }
 
     @PostMapping("/unityScene")
     public ResponseEntity<List<SceneResponseDTO>> getActiveScenesByUnityName(@Valid @RequestBody
-                                                                                 SceneByUnityNameRequestDTO sceneByUnityNameRequestDTO){
+                                                                             SceneByUnityNameRequestDTO sceneByUnityNameRequestDTO){
         return ResponseEntity.ok(sceneService.getActiveScenesByUnityName(sceneByUnityNameRequestDTO));
     }
 
@@ -54,7 +44,7 @@ public class SceneController {
     public ResponseEntity<Void> deleteSceneByServerName(@PathVariable(value = "serverName") String serverName) {
         sceneService.deleteSceneByServerName(serverName);
         return ResponseEntity.ok().build();
-    }
+    }*/
 
 
 

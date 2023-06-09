@@ -13,7 +13,11 @@ import java.util.Optional;
 
 public interface SceneRepository extends JpaRepository<Scene,Integer> {
 
-    List<Scene> findByActiveTrue();
+    Scene findFirstByActiveFalseOrderBySceneTypeAsc();
+
+    Scene findByScenePassword(String scenePassword);
+
+    /*List<Scene> findByActiveTrue();
 
     List<Scene> findByActiveTrueAndSceneType(SceneType sceneType);
 
@@ -25,7 +29,7 @@ public interface SceneRepository extends JpaRepository<Scene,Integer> {
 
     Scene findByServerServerName(String serverName);
 
-    Scene findFirstByActiveFalseOrderBySceneTypeAsc();
+
 
     Scene getSceneBySceneName(String sceneName);
     @Query(value = "SELECT req.unityScene FROM Scene req")
@@ -33,6 +37,6 @@ public interface SceneRepository extends JpaRepository<Scene,Integer> {
 
     Optional<Scene> findBySceneName(String sceneName);
 
-    Optional<Scene> findByHostEmail(String hostEmail);
+    Optional<Scene> findByHostEmail(String hostEmail);*/
 
 }

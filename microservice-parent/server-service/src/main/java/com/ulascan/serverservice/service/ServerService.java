@@ -1,16 +1,17 @@
 package com.ulascan.serverservice.service;
 
-import com.ulascan.serverservice.dto.ServerRequestDTO;
-import com.ulascan.serverservice.dto.ServerResponseDTO;
+import com.ulascan.serverservice.dto.server.ServerRequestDTO;
+import com.ulascan.serverservice.dto.server.ServerResponseDTO;
+import com.ulascan.serverservice.entity.EventEntity;
 import com.ulascan.serverservice.entity.Scene;
 import com.ulascan.serverservice.entity.Server;
 import com.ulascan.serverservice.enums.SceneType;
 import com.ulascan.serverservice.enums.UnityScene;
-import com.ulascan.serverservice.exception.BadRequestException;
-import com.ulascan.serverservice.exception.Error;
+import com.ulascan.serverservice.util.exception.BadRequestException;
+import com.ulascan.serverservice.util.exception.Error;
 import com.ulascan.serverservice.repository.SceneRepository;
 import com.ulascan.serverservice.repository.ServerRepository;
-import com.ulascan.serverservice.util.Mapper;
+import com.ulascan.serverservice.util.mapper.ModelConverter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,9 +30,9 @@ public class ServerService implements IServerService{
 
     private final ServerRepository serverRepository;
 
-    private final SceneRepository sceneRepository;
+    private final ISceneService sceneService;
 
-    private final Mapper mapper;
+    private final ModelConverter modelConverter;
 
     /**
      * Retrieves all servers.
@@ -39,7 +40,7 @@ public class ServerService implements IServerService{
      * @return A list of ServerRequestDTO objects containing server data.
      */
     public List<ServerRequestDTO> getAllServers() {
-        return mapper.mapList(serverRepository.findAll(), ServerRequestDTO.class);
+        return modelConverter.mapList(serverRepository.findAll(), ServerRequestDTO.class);
     }
 
     /**
@@ -54,15 +55,17 @@ public class ServerService implements IServerService{
     public ServerResponseDTO setServer(ServerRequestDTO serverRequestDTO) {
 
         Server server = serverRepository.findByServerName(serverRequestDTO.getServerName());
-        Scene scene = sceneRepository.findFirstByActiveFalseOrderBySceneTypeAsc();
+        Scene scene = sceneService.findFirstAvailableScene();
+        //
+
         ServerResponseDTO responseDTO = ServerResponseDTO.builder().unityScene(serverRequestDTO.getUnityScene()).build();
 
-        server = mapper.dtoToEntity(serverRequestDTO, Objects.requireNonNullElseGet(server, Server::new));
+        server = modelConverter.dtoToEntity(serverRequestDTO, Objects.requireNonNullElseGet(server, Server::new));
         //2: sahne ayrlarını yap
 
         if(scene != null && serverRequestDTO.getUnityScene().equals(UnityScene.IdleScene) && server.getScene() == null)
         {
-            responseDTO.setUnityScene(scene.getUnityScene());
+            responseDTO.setUnityScene(scene.getUnitySceneName());
             scene.setActive(true);
             server.setScene(scene);
             scene.setServer(server);
@@ -97,7 +100,7 @@ public class ServerService implements IServerService{
 
         if(server == null) throw new BadRequestException(Error.SERVER_DOESNT_EXIST.getErrorCode(), Error.SERVER_DOESNT_EXIST.getErrorMessage());
 
-        return mapper.entityToDTO(server) ;
+        return modelConverter.entityToDTO(server) ;
     }
 
     /**
@@ -118,7 +121,8 @@ public class ServerService implements IServerService{
             Scene scene = server.getScene();
             scene.setActive(false);
             scene.setServer(null);
-            sceneRepository.save(scene);
+            //TODO scene service save yaz
+            //sceneRepository.save(scene); //TODO düzelt
         }
 
         serverRepository.delete(server);
@@ -131,7 +135,8 @@ public class ServerService implements IServerService{
      */
     @Transactional
     public void deleteSceneByServerName(String serverName) {
-        Scene scene = sceneRepository.findByServerServerName(serverName);
+        //Scene scene = sceneRepository.findByServerServerName(serverName);
+        Scene scene = new Scene(); //TODO düzelt
         Server server = scene.getServer();
 
         if(server != null)
@@ -142,8 +147,8 @@ public class ServerService implements IServerService{
 
         scene.setActive(false);
 
-        if(!(scene.getSceneType() == SceneType.DEFAULT))
-            sceneRepository.delete(scene);
+        /*if(!(scene.getSceneType() == SceneType.DEFAULT))
+            sceneRepository.delete(scene);*/
     }
 
     /**

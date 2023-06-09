@@ -105,8 +105,12 @@ services:
       context: ./server-service
       dockerfile: ../server-service/Dockerfile
     image: starverse/server-service:latest
+    env_file: ./.env
+    ports:
+      - "5006:5006"
     environment:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-server:5434/server-service
+      - JAVA_TOOL_OPTIONS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5006
     depends_on:
       - postgres-server
       - discovery-server
@@ -119,6 +123,7 @@ services:
       context: ./launcher-service
       dockerfile: ../launcher-service/Dockerfile
     image: starverse/launcher-service:latest
+    env_file: ./.env
     environment:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-launcher:5433/launcher-service
     depends_on:

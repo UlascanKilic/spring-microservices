@@ -1,4 +1,4 @@
-package com.ulascan.serverservice.dto;
+package com.ulascan.serverservice.dto.server;
 
 import lombok.*;
 

@@ -1,0 +1,67 @@
+version: "3"
+services:
+  ## API GATEWAY
+  api-gateway:
+    container_name: api-gateway
+    image: starverse/api-gateway:latest
+    build:
+      context: ./api-gateway
+      dockerfile: ../api-gateway/Dockerfile
+    ports:
+      - "7770:7770"
+      - "5005:5005"
+    env_file: ./.env
+    environment:
+      - JAVA_TOOL_OPTIONS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005
+    depends_on:
+      - discovery-server
+
+  ## Eureka Server
+  discovery-server:
+    build:
+      context: ./discovery-server
+      dockerfile: ../discovery-server/Dockerfile
+    image: starverse/discovery-server:latest
+    container_name: discovery-server
+    ports:
+      - "8761:8761"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+  ##DATABASES
+
+  ## POSTGRES SERVER DB
+  postgres-server:
+    container_name: postgres-server
+    image: postgres
+    environment:
+      POSTGRES_DB: server-service
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      PGDATA: /data/postgres
+    volumes:
+      - ./postgres-server:/data/postgres
+    ports:
+      - "5434:5434"
+    command: -p 5434
+    restart: always
+
+
+  ## SERVICES
+
+  ## Server-Service Docker Compose Config
+  server-service:
+    container_name: server-service
+    build:
+      context: ./server-service
+      dockerfile: ../server-service/Dockerfile
+    image: starverse/server-service:latest
+    env_file: ./.env
+    ports:
+      - "5006:5006"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-server:5434/server-service
+      - JAVA_TOOL_OPTIONS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5006
+    depends_on:
+      - postgres-server
+      - discovery-server
+      - api-gateway
