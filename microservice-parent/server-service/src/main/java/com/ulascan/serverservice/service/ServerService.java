@@ -61,6 +61,9 @@ public class ServerService implements IServerService {
 
         ServerResponseDTO responseDTO = ServerResponseDTO.builder().unityScene(serverRequestDTO.getUnityScene()).build();
 
+
+        if(responseDTO.getUnityScene() == UnityScene.LoadingScene) return responseDTO;
+
         server = modelConverter.dtoToEntity(serverRequestDTO, Objects.requireNonNullElseGet(server, Server::new));
         //2: sahne ayrlarını yap
 
