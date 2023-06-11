@@ -1,6 +1,6 @@
 
-import com.ulascan.serverservice.repository.SceneRepository;
-import com.ulascan.serverservice.repository.ServerRepository;
+import com.ulascan.serverservice.repository.ISceneRepository;
+import com.ulascan.serverservice.repository.IServerRepository;
 import com.ulascan.serverservice.service.SceneService;
 import com.ulascan.serverservice.service.ServerService;
 import com.ulascan.serverservice.util.mapper.ModelConverter;
@@ -22,13 +22,13 @@ import static org.mockito.Mockito.any;
 class SceneServiceTest {
 
     @Mock
-    private SceneRepository sceneRepository;
+    private ISceneRepository ISceneRepository;
 
     @Mock
     private ServerService serverService;
 
     @Mock
-    private ServerRepository serverRepository;
+    private IServerRepository IServerRepository;
 
     @Mock
     private ModelConverter modelConverter;

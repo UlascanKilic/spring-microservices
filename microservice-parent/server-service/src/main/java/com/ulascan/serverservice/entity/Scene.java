@@ -18,7 +18,9 @@ public class Scene {
     @GeneratedValue
     private Integer id;
 
-    public UnityScene unitySceneName;
+    private String name;
+
+    public UnityScene unityScene;
 
     private int maxUserCapacity;
 

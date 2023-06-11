@@ -9,4 +9,8 @@ import java.util.List;
 
 public interface ISceneService {
     Scene findFirstAvailableScene();
+
+    void setSceneFree(Scene scene);
+
+    void delete(NameDTO nameDTO);
 }

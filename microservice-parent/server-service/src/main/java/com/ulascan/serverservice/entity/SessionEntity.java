@@ -21,7 +21,7 @@ public class SessionEntity extends Scene{
     String lecturerEmail;
     String scenePassword;
     String lessonCode;
-    String sessionName; //unique
+
 
     boolean privateScene;
 }

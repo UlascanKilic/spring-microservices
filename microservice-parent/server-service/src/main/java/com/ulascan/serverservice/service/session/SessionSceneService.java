@@ -3,8 +3,10 @@ package com.ulascan.serverservice.service.session;
 import com.ulascan.serverservice.dto.scene.*;
 import com.ulascan.serverservice.dto.scene.SceneResponseDTO;
 import com.ulascan.serverservice.dto.scene.session.*;
-import com.ulascan.serverservice.entity.EventEntity;
+import com.ulascan.serverservice.entity.Scene;
+import com.ulascan.serverservice.entity.Server;
 import com.ulascan.serverservice.entity.SessionEntity;
+import com.ulascan.serverservice.repository.IServerRepository;
 import com.ulascan.serverservice.repository.ISessionRepository;
 import com.ulascan.serverservice.service.AbstractSceneService;
 import com.ulascan.serverservice.util.exception.BadRequestException;
@@ -26,7 +28,9 @@ public class SessionSceneService extends AbstractSceneService {
 
     @Autowired
     public SessionSceneService(ISessionRepository repository,
-                               ModelConverter modelConverter){
+                               ModelConverter modelConverter,
+                               IServerRepository serverRepository){
+        super(serverRepository);
         this.repository = repository;
         this.modelConverter = modelConverter;
     }
@@ -62,7 +66,7 @@ public class SessionSceneService extends AbstractSceneService {
 
     @Override
     public SessionEntity getSceneByName(String name) {
-        return repository.findBySessionName(name);
+        return repository.findByName(name);
     }
 
     @Override
@@ -111,11 +115,38 @@ public class SessionSceneService extends AbstractSceneService {
     @Override
     public void validateScene(SceneRequestDTO sceneRequestDTO) {
         //TODO hata isimlendirmelerini düzelt
+
+        if(findFreeServer())
+            throw new BadRequestException(Error.NO_FREE_SERVER_FOUND.getErrorCode(),
+                Error.NO_FREE_SERVER_FOUND.getErrorMessage());
+
         SessionRequestDTO dto = (SessionRequestDTO) sceneRequestDTO;
-        if(getSceneByName(dto.getSessionName()) != null){
+        if(getSceneByName(dto.getName()) != null){
             throw new BadRequestException(Error.DUPLICATE_SCENE_NAME.getErrorCode(),
                     Error.DUPLICATE_SCENE_NAME.getErrorMessage());
         }
 
+    }
+
+    @Override
+    public void delete(Scene scene) {
+
+        SessionEntity sessionEntity = (SessionEntity) scene;
+        Server server = sessionEntity.getServer();
+
+        if (server != null) {
+            server.setScene(null);
+            serverRepository.save(server);
+        }
+
+        repository.delete(sessionEntity);
+    }
+
+    @Override
+    public void setSceneFree(Scene scene) {
+        SessionEntity sessionEntity = (SessionEntity) scene;
+        sessionEntity.setActive(false);
+        sessionEntity.setServer(null);
+        repository.save(sessionEntity);
     }
 }

@@ -3,18 +3,13 @@ package com.ulascan.serverservice.service.event;
 import com.ulascan.serverservice.dto.scene.*;
 import com.ulascan.serverservice.dto.scene.event.*;
 import com.ulascan.serverservice.dto.scene.SceneResponseDTO;
-import com.ulascan.serverservice.dto.scene.session.SessionRequestDTO;
-import com.ulascan.serverservice.dto.scene.session.SessionResponseDTO;
-import com.ulascan.serverservice.entity.EventEntity;
-import com.ulascan.serverservice.entity.Scene;
-import com.ulascan.serverservice.entity.SessionEntity;
+import com.ulascan.serverservice.entity.*;
 import com.ulascan.serverservice.repository.IEventRepository;
-import com.ulascan.serverservice.repository.ISessionRepository;
+import com.ulascan.serverservice.repository.IServerRepository;
 import com.ulascan.serverservice.service.AbstractSceneService;
 import com.ulascan.serverservice.util.exception.BadRequestException;
 import com.ulascan.serverservice.util.exception.Error;
 import com.ulascan.serverservice.util.mapper.ModelConverter;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -31,7 +26,9 @@ public class EventSceneService extends AbstractSceneService {
 
     @Autowired
     public EventSceneService(IEventRepository repository,
-                               ModelConverter modelConverter){
+                             ModelConverter modelConverter,
+                             IServerRepository serverRepository){
+        super(serverRepository);
         this.repository = repository;
         this.modelConverter = modelConverter;
     }
@@ -66,7 +63,7 @@ public class EventSceneService extends AbstractSceneService {
 
     @Override
     public EventEntity getSceneByName(String name) {
-        return repository.findByEventName(name);
+        return repository.findByName(name);
     }
 
     @Override
@@ -125,13 +122,39 @@ public class EventSceneService extends AbstractSceneService {
     @Override
     public void validateScene(SceneRequestDTO sceneRequestDTO) {
 
+        if(findFreeServer())
+            throw new BadRequestException(Error.NO_FREE_SERVER_FOUND.getErrorCode(),
+                    Error.NO_FREE_SERVER_FOUND.getErrorMessage());
+
         EventRequestDTO requestDTO = (EventRequestDTO) sceneRequestDTO;
 
-        if(getSceneByName(requestDTO.getEventName()) != null){
+        if(getSceneByName(requestDTO.getName()) != null){
             throw new BadRequestException(Error.DUPLICATE_SCENE_NAME.getErrorCode(),
                     Error.DUPLICATE_SCENE_NAME.getErrorMessage());
         }
 
+    }
+
+    @Override
+    public void delete(Scene scene) {
+        EventEntity eventEntity = (EventEntity) scene;
+
+        Server server = eventEntity.getServer();
+
+        if (server != null) {
+            server.setScene(null);
+            serverRepository.save(server);
+        }
+
+        repository.delete(eventEntity);
+    }
+
+    @Override
+    public void setSceneFree(Scene scene) {
+        EventEntity eventEntity = (EventEntity) scene;
+        eventEntity.setActive(false);
+        eventEntity.setServer(null);
+        repository.save(eventEntity);
     }
 
     private void setEventLive(String eventName ,boolean isLive){

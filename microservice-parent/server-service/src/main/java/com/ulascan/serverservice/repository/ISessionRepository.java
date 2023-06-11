@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface ISessionRepository extends JpaRepository<SessionEntity,Integer> {
 
-    SessionEntity findBySessionName(String sessionName);
+    SessionEntity findByName(String sessionName);
 
     SessionEntity findByScenePassword(String password);
 

@@ -16,9 +16,5 @@ import lombok.*;
 @Table(name = "environment_scene")
 public class EnvironmentEntity extends Scene {
 
-    String environmentName;
     String description;
-
-
-    private int maxUserCapacity;
 }

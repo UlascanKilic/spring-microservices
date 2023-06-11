@@ -11,7 +11,10 @@ import java.io.Serializable;
 @AllArgsConstructor
 @NoArgsConstructor
 public abstract class SceneResponseDTO implements Serializable {
-    private UnityScene unitySceneName;
+
+    private String name; //unique
+
+    private UnityScene unityScene;
 
     private String port;
 

@@ -12,8 +12,8 @@ public interface IEnvironmentRepository extends JpaRepository<EnvironmentEntity,
 
     List<EnvironmentEntity> findByActiveTrue();
 
-    @Query(value = "SELECT req.unitySceneName FROM Scene req")
-    List<UnityScene> findAllUnitySceneNames();
+    @Query(value = "SELECT req.unityScene FROM Scene req")
+    List<UnityScene> findAllUnityScenes();
 
     EnvironmentEntity findFirstByActiveFalse();
 }

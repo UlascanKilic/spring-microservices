@@ -1,23 +1,17 @@
 package com.ulascan.serverservice.service;
 
-import com.ulascan.serverservice.dto.scene.*;
-import com.ulascan.serverservice.dto.scene.session.CreateSessionResponseDTO;
-import com.ulascan.serverservice.dto.scene.SceneResponseDTO;
-import com.ulascan.serverservice.entity.EventEntity;
+import com.ulascan.serverservice.dto.scene.NameDTO;
 import com.ulascan.serverservice.entity.Scene;
+import com.ulascan.serverservice.entity.Server;
 import com.ulascan.serverservice.enums.SceneType;
-import com.ulascan.serverservice.service.environment.EnvironmentSceneService;
-import com.ulascan.serverservice.service.event.EventSceneService;
-import com.ulascan.serverservice.repository.SceneRepository;
-import com.ulascan.serverservice.service.session.SessionSceneService;
+import com.ulascan.serverservice.repository.ISceneRepository;
 import com.ulascan.serverservice.util.SceneServiceProvider;
 import com.ulascan.serverservice.util.exception.BadRequestException;
 import com.ulascan.serverservice.util.exception.Error;
 import com.ulascan.serverservice.util.mapper.ModelConverter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Service class for managing scenes in the server.
@@ -29,77 +23,48 @@ import java.util.List;
 @RequiredArgsConstructor
 public class SceneService implements ISceneService{
 
-    private final SceneRepository sceneRepository;
+    private final ISceneRepository sceneRepository;
 
     private final ModelConverter modelConverter;
-
-
     private final SceneServiceProvider sceneServiceProvider;
 
     @Override
     public Scene findFirstAvailableScene() {
 
-        var abstractService = sceneServiceProvider.getSceneService(SceneType.EVENT);
-        Scene scene = abstractService.findFirstByActiveFalse();
+        SceneType[] sceneTypes = {SceneType.EVENT, SceneType.SESSION, SceneType.ENVIRONMENT};
 
-        if(scene != null)
-            return scene;
+        for (SceneType sceneType : sceneTypes) {
+            var abstractService = sceneServiceProvider.getSceneService(sceneType);
+            Scene scene = abstractService.findFirstByActiveFalse();
 
-        abstractService = sceneServiceProvider.getSceneService(SceneType.SESSION);
-        scene = abstractService.findFirstByActiveFalse();
+            if (scene != null) {
+                return scene;
+            }
+        }
 
-        if(scene != null)
-            return scene;
-
-        abstractService = sceneServiceProvider.getSceneService(SceneType.ENVIRONMENT);
-        scene = abstractService.findFirstByActiveFalse();
-
-        return scene;
+        return null;
     }
 
-    /*public SceneResponseDTO joinWithPasswordNew(PasswordDTO passwordDTO)
-    {
-        Scene event = sceneRepository.findByScenePassword(passwordDTO.getPassword());
+    @Override
+    @Transactional
+    public void setSceneFree(Scene scene) {
+        var abstractService = sceneServiceProvider.getSceneService(scene.getSceneType());
+        abstractService.setSceneFree(scene);
+    }
 
-        //TODO: hataları özelleştir live değilse, active değilse vs
-        if(event != null && event.isLive() && event.isActive()){
-            return modelConverter.entityToDTO(event);
+    @Override
+    @Transactional
+    public void delete(NameDTO nameDTO) {
+
+        Scene scene = sceneRepository.findByName(nameDTO.getName());
+        if(scene != null)
+        {
+            var abstractService = sceneServiceProvider.getSceneService(scene.getSceneType());
+            abstractService.delete(scene);
         }
         else {
-            throw new BadRequestException(Error.EVENT_NOT_FOUND.getErrorCode(),
-                    Error.EVENT_NOT_FOUND.getErrorMessage());
+            throw new BadRequestException(Error.SCENE_NOT_FOUND.getErrorCode(), Error.SCENE_NOT_FOUND.getErrorMessage());
         }
-    }*/
-
-    /**
-     * Retrieves all active scenes.
-     *
-     * @return List of SceneResponseDTO objects containing scene data.
-     */
-   /* public List<SceneResponseDTO> getAllScenes() {
-        return modelConverter.mapList(sceneRepository.findByActiveTrue(),SceneResponseDTO.class);
-    }*/
-
-
-    /**
-     * Retrieves all active scenes of a specific Unity scene name.
-     *
-     * @param sceneByUnityNameRequestDTO The SceneByUnityNameRequestDTO object containing the Unity scene name.
-     * @return List of SceneResponseDTO objects containing scene data.
-     */
-    /*public List<SceneResponseDTO> getActiveScenesByUnityName(SceneByUnityNameRequestDTO sceneByUnityNameRequestDTO) {
-        return modelConverter.mapList(sceneRepository
-                .findByActiveTrueAndUnityScene(sceneByUnityNameRequestDTO.getUnityScene()), SceneResponseDTO.class);
-    }*/
-
-    /**
-     * Deletes a scene by the server name.
-     *
-     * @param serverName The name of the server containing the scene to delete.
-     */
-   /* public void deleteSceneByServerName(String serverName) {
-        serverService.deleteSceneByServerName(serverName);
-    }*/
-
+    }
 
 }

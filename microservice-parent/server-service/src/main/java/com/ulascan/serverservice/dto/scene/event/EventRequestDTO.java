@@ -11,7 +11,6 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class EventRequestDTO extends SceneRequestDTO {
 
-    String eventName; //unique
     String organizerName;
     String date;
     String description;

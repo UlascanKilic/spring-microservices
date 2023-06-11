@@ -10,7 +10,7 @@ public interface IEventRepository extends JpaRepository<EventEntity,Integer> {
 
     List<EventEntity> findByActiveTrue();
 
-    EventEntity findByEventName(String eventName);
+    EventEntity findByName(String eventName);
 
     EventEntity findFirstByActiveFalseAndLiveTrue();
 

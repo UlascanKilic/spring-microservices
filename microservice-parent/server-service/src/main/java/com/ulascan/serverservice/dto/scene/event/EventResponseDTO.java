@@ -8,7 +8,6 @@ import lombok.*;
 @NoArgsConstructor
 public class EventResponseDTO extends SceneResponseDTO {
 
-    private String eventName;
     private String organizerName;
     private String date;
     private String description;

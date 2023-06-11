@@ -1,5 +1,6 @@
 package com.ulascan.serverservice.controller;
 
+import com.ulascan.serverservice.dto.scene.NameDTO;
 import com.ulascan.serverservice.dto.server.ServerRequestDTO;
 import com.ulascan.serverservice.dto.server.ServerResponseDTO;
 import com.ulascan.serverservice.service.ServerService;
@@ -32,8 +33,8 @@ public class ServerController {
         return ResponseEntity.ok(serverService.getServerByName(serverName));
     }
 
-    @DeleteMapping("/{serverName}")
-    public void deleteServerByName(@PathVariable(value = "serverName") String serverName) {
-        serverService.deleteServerByName(serverName);
+    @DeleteMapping
+    public void deleteServerByName(@Valid @RequestBody NameDTO nameDTO) {
+        serverService.deleteServerByName(nameDTO);
     }
 }

@@ -3,12 +3,12 @@ package com.ulascan.serverservice.service.environment;
 import com.ulascan.serverservice.dto.scene.*;
 import com.ulascan.serverservice.dto.scene.environment.EnvironmentResponseDTO;
 import com.ulascan.serverservice.dto.scene.SceneResponseDTO;
-import com.ulascan.serverservice.entity.EnvironmentEntity;
-import com.ulascan.serverservice.entity.Scene;
+import com.ulascan.serverservice.entity.*;
 import com.ulascan.serverservice.enums.DefaultUnityScenes;
 import com.ulascan.serverservice.enums.SceneType;
 import com.ulascan.serverservice.enums.UnityScene;
 import com.ulascan.serverservice.repository.IEnvironmentRepository;
+import com.ulascan.serverservice.repository.IServerRepository;
 import com.ulascan.serverservice.service.AbstractSceneService;
 import com.ulascan.serverservice.util.mapper.ModelConverter;
 import jakarta.annotation.PostConstruct;
@@ -25,26 +25,28 @@ public class EnvironmentSceneService extends AbstractSceneService {
 
     @Autowired
     public EnvironmentSceneService(IEnvironmentRepository repository,
-                               ModelConverter modelConverter){
+                                   ModelConverter modelConverter,
+                                   IServerRepository serverRepository){
+        super(serverRepository);
         this.repository = repository;
         this.modelConverter = modelConverter;
     }
 
     @PostConstruct
     public void postConstruct() {
-        List<UnityScene> sceneNameList = repository.findAllUnitySceneNames();
+        List<UnityScene> sceneNameList = repository.findAllUnityScenes();
 
         for(UnityScene sceneName : DefaultUnityScenes.DEFAULT_UNITY_SCENES.getScenes() ){
             if(!sceneNameList.contains(sceneName)){
                 //open scene
                 EnvironmentEntity environment = new EnvironmentEntity();
-                environment.setEnvironmentName("Ortabahce");
+                environment.setName("Ortabahce");
                 environment.setDescription("Baharin vazgecilmezi!");
                 environment.setMaxUserCapacity(60);
                 environment.setActive(false);
                 environment.setServer(null);
                 environment.setSceneType(SceneType.ENVIRONMENT);
-                environment.setUnitySceneName(sceneName);
+                environment.setUnityScene(sceneName);
 
                 repository.save(environment);
             }
@@ -98,5 +100,26 @@ public class EnvironmentSceneService extends AbstractSceneService {
     @Override
     public void validateScene(SceneRequestDTO sceneRequestDTO) {
 
+    }
+
+    @Override
+    public void delete(Scene scene) {
+        EnvironmentEntity environmentEntity = (EnvironmentEntity) scene;
+        Server server = environmentEntity.getServer();
+
+        if (server != null) {
+            server.setScene(null);
+            serverRepository.save(server);
+        }
+
+        //repository.delete(environmentEntity);
+    }
+
+    @Override
+    public void setSceneFree(Scene scene) {
+        EnvironmentEntity environmentEntity = (EnvironmentEntity) scene;
+        environmentEntity.setActive(false);
+        environmentEntity.setServer(null);
+        repository.save(environmentEntity);
     }
 }

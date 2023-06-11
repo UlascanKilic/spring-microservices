@@ -33,22 +33,21 @@ services:
       - eduverse-network
   ##DATABASES
 
-  ## POSTGRES USER DB
-  postgres-user:
-    container_name: postgres-user
+
+  ## POSTGRES SERVER DB
+  postgres-server:
+    container_name: postgres-server
     image: postgres
     environment:
-      POSTGRES_DB: user-service
+      POSTGRES_DB: server-service
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: password
       PGDATA: /data/postgres
     volumes:
-      - ./postgres-user:/data/postgres
-    expose:
-      - "5431"
+      - ./postgres-server:/data/postgres
     ports:
-      - "5431:5431"
-    command: -p 5431
+      - "5434:5434"
+    command: -p 5434
     restart: always
     networks:
       - eduverse-network
@@ -56,33 +55,23 @@ services:
 
 
 
-  ## SERVICES
 
-  notification-service:
-    container_name: notification-service
+
+  ## Server-Service Docker Compose Config
+  server-service:
+    container_name: server-service
     build:
-      context: ./notification-service
-      dockerfile: ../notification-service/Dockerfile
-    image: starverse/notification-service:latest
+      context: ./server-service
+      dockerfile: ../server-service/Dockerfile
+    image: starverse/server-service:latest
     env_file: ./.env
-    depends_on:
-      - broker
-      - discovery-server
-      - api-gateway
-    networks:
-      - eduverse-network
-  ## User-Service Docker Compose Config
-  user-service:
-    container_name: user-service
-    build:
-      context: ./user-service
-      dockerfile: ../user-service/Dockerfile
-    image: starverse/user-service:latest
+    ports:
+      - "5006:5006"
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-user:5431/user-service
-    env_file: ./.env
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-server:5434/server-service
+      - JAVA_TOOL_OPTIONS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5006
     depends_on:
-      - postgres-user
+      - postgres-server
       - discovery-server
       - api-gateway
     networks:
@@ -91,34 +80,6 @@ services:
 
 
 
-
-  zookeeper:
-    image: confluentinc/cp-zookeeper:7.0.1
-    container_name: zookeeper
-    ports:
-      - "2181:2181"
-    environment:
-      ZOOKEEPER_CLIENT_PORT: 2181
-      ZOOKEEPER_TICK_TIME: 2000
-    networks:
-      - eduverse-network
-  broker:
-    image: confluentinc/cp-kafka:7.0.1
-    container_name: broker
-    ports:
-      - "9092:9092"
-    depends_on:
-      - zookeeper
-    environment:
-      KAFKA_BROKER_ID: 1
-      KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_INTERNAL:PLAINTEXT
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092,PLAINTEXT_INTERNAL://broker:29092
-      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
-      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
-      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
-    networks:
-      - eduverse-network
 
 
 networks:

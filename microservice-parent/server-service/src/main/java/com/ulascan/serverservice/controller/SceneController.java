@@ -17,6 +17,11 @@ public class SceneController {
 
     private final SceneService sceneService;
 
+    @DeleteMapping
+    public ResponseEntity<Void> deleteSceneBySceneName(@Valid @RequestBody NameDTO nameDTO) {
+        sceneService.delete(nameDTO);
+        return ResponseEntity.ok().build();
+    }
    /* @GetMapping
     public ResponseEntity<List<SceneResponseDTO>> getAllScenes() {
         return ResponseEntity.ok(sceneService.getAllScenes());
@@ -40,10 +45,7 @@ public class SceneController {
         return ResponseEntity.ok(sceneService.getActiveScenesByUnityName(sceneByUnityNameRequestDTO));
     }
 
-    @DeleteMapping("/close/{serverName}")
-    public ResponseEntity<Void> deleteSceneByServerName(@PathVariable(value = "serverName") String serverName) {
-        sceneService.deleteSceneByServerName(serverName);
-        return ResponseEntity.ok().build();
+
     }*/
 
 

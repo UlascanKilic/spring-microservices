@@ -11,9 +11,11 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 @NoArgsConstructor
 public class SceneRequestDTO {
-    //TODO: add lessonCode and facultyName fields
+
+    private String name;
+
     @NotNull
-    private UnityScene unitySceneName;
+    private UnityScene unityScene;
 
     private int maxUserCapacity;
 

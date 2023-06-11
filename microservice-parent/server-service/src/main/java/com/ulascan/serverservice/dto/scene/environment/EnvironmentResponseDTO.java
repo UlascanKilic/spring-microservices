@@ -7,6 +7,5 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 public class EnvironmentResponseDTO extends SceneResponseDTO {
-    private String environmentName;
     private String description ;
 }

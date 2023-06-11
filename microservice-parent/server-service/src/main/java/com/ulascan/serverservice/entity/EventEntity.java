@@ -16,7 +16,6 @@ import lombok.*;
 @Table(name = "event_scene")
 public class EventEntity extends Scene {
 
-    String eventName; //unique
     String organizerName;
     String date;
     String scenePassword;// scenePassword is unique

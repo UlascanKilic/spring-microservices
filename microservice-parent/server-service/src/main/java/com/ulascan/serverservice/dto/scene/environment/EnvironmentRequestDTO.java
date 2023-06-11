@@ -10,7 +10,6 @@ import lombok.experimental.SuperBuilder;
 @Setter
 public class EnvironmentRequestDTO extends SceneRequestDTO {
 
-    String environmentName;
     String description;
 
 }
