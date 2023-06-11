@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -19,7 +20,9 @@ import ulascan.userservice.dto.AuthenticationResponseDTO;
 import ulascan.userservice.dto.RegisterRequestDTO;
 import ulascan.userservice.entity.*;
 import ulascan.userservice.exception.BadRequestException;
+import ulascan.userservice.exception.ConflictException;
 import ulascan.userservice.exception.Error;
+import ulascan.userservice.kafka.SendMailEvent;
 import ulascan.userservice.repository.TokenRepository;
 import ulascan.userservice.repository.UserRepository;
 import ulascan.userservice.utils.RandomString;
@@ -38,6 +41,8 @@ public class AuthenticationService implements IAuthenticationService {
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
 
+    private final KafkaTemplate<String, SendMailEvent> kafkaTemplate;
+
     /**
      * Registers a new user with the provided information.
      * Generates a random verification code and saves it to the user entity.
@@ -48,13 +53,13 @@ public class AuthenticationService implements IAuthenticationService {
      * @throws BadRequestException if the email is already in use.
      */
     @Transactional
-    public AuthenticationResponseDTO register(RegisterRequestDTO request) {
+    public void register(RegisterRequestDTO request) {
         Map<String, Object> roleClaims = new HashMap<>();
 
         String randomCode = RandomString.make(64);
 
         if(repository.findByEmail(request.getEmail()) != null)
-            throw new BadRequestException(Error.EMAIL_IS_IN_USE.getErrorCode(), Error.EMAIL_IS_IN_USE.getErrorMessage());
+            throw new ConflictException(Error.EMAIL_IS_IN_USE.getErrorCode(), Error.EMAIL_IS_IN_USE.getErrorMessage());
 
         User user = User.builder()
                 .firstName(request.getFirstName())
@@ -68,8 +73,16 @@ public class AuthenticationService implements IAuthenticationService {
                 .isPrivileged(false)
                 .build();
 
+        //TODO for the test purposes
+        if(user.getFirstName().contains("server"))
+            user.setRole(Role.SERVER);
 
-        //TODO send mail mailService.sendVerificationEmail(userEntity, "http://193.140.7.178:7769");
+        kafkaTemplate.send("notificationTopic", SendMailEvent.builder()
+                        .firstName(user.getFirstName())
+                        .lastName(user.getLastName())
+                        .email(user.getEmail())
+                        .verificationCode(user.getVerificationCode())
+                        .build());
 
         //JWT
         //List<String> roleStrings = jwtService.convertAuthoritiesToStringList((List<SimpleGrantedAuthority>) user.getAuthorities());
@@ -79,10 +92,10 @@ public class AuthenticationService implements IAuthenticationService {
         var jwtToken = jwtService.generateToken(roleClaims, user);
         var refreshToken = jwtService.generateRefreshToken(roleClaims,user);
         //saveUserToken(savedUser, jwtToken);
-        return  AuthenticationResponseDTO.builder()
+        /*return  AuthenticationResponseDTO.builder()
                 .accessToken(jwtToken)
                 .refreshToken(refreshToken)
-                .build();
+                .build();*/
     }
 
     /**

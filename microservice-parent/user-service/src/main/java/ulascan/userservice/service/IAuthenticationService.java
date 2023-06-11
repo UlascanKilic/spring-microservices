@@ -5,7 +5,7 @@ import ulascan.userservice.dto.AuthenticationResponseDTO;
 import ulascan.userservice.dto.RegisterRequestDTO;
 
 public interface IAuthenticationService {
-    AuthenticationResponseDTO register(RegisterRequestDTO request);
+    void register(RegisterRequestDTO request);
     AuthenticationResponseDTO authenticate(AuthenticationRequestDTO request);
     boolean verify(String code);
 }

@@ -11,6 +11,7 @@
         <module name="discovery-server" />
         <module name="user-service" />
         <module name="launcher-service" />
+        <module name="notification-service" />
         <module name="server-service" />
       </profile>
     </annotationProcessing>
@@ -26,9 +27,10 @@
       <module name="discovery-server" options="-parameters" />
       <module name="inventory-service" options="-parameters" />
       <module name="launcher-service" options="-parameters" />
+      <module name="notification-service" options="-parameters" />
       <module name="order-service" options="-parameters" />
       <module name="product-service" options="-parameters" />
-      <module name="server-service" options="-parameters --add-modules java.base" />
+      <module name="server-service" options="-parameters" />
       <module name="user-service" options="-parameters" />
     </option>
   </component>

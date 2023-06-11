@@ -21,6 +21,7 @@
         <module>user-service</module>
         <module>launcher-service</module>
         <module>server-service</module>
+        <module>notification-service</module>
     </modules>
 
     <properties>
