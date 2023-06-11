@@ -5,6 +5,7 @@ import com.ulascan.serverservice.dto.scene.event.*;
 import com.ulascan.serverservice.dto.scene.SceneResponseDTO;
 import com.ulascan.serverservice.entity.*;
 import com.ulascan.serverservice.repository.IEventRepository;
+import com.ulascan.serverservice.repository.ISceneRepository;
 import com.ulascan.serverservice.repository.IServerRepository;
 import com.ulascan.serverservice.service.AbstractSceneService;
 import com.ulascan.serverservice.util.exception.BadRequestException;
@@ -27,8 +28,9 @@ public class EventSceneService extends AbstractSceneService {
     @Autowired
     public EventSceneService(IEventRepository repository,
                              ModelConverter modelConverter,
-                             IServerRepository serverRepository){
-        super(serverRepository);
+                             IServerRepository serverRepository,
+                             ISceneRepository sceneRepository){
+        super(serverRepository,sceneRepository);
         this.repository = repository;
         this.modelConverter = modelConverter;
     }

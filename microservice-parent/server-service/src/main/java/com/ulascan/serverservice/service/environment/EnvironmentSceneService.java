@@ -8,6 +8,7 @@ import com.ulascan.serverservice.enums.DefaultUnityScenes;
 import com.ulascan.serverservice.enums.SceneType;
 import com.ulascan.serverservice.enums.UnityScene;
 import com.ulascan.serverservice.repository.IEnvironmentRepository;
+import com.ulascan.serverservice.repository.ISceneRepository;
 import com.ulascan.serverservice.repository.IServerRepository;
 import com.ulascan.serverservice.service.AbstractSceneService;
 import com.ulascan.serverservice.util.mapper.ModelConverter;
@@ -26,8 +27,9 @@ public class EnvironmentSceneService extends AbstractSceneService {
     @Autowired
     public EnvironmentSceneService(IEnvironmentRepository repository,
                                    ModelConverter modelConverter,
-                                   IServerRepository serverRepository){
-        super(serverRepository);
+                                   IServerRepository serverRepository,
+                                   ISceneRepository sceneRepository){
+        super(serverRepository,sceneRepository);
         this.repository = repository;
         this.modelConverter = modelConverter;
     }

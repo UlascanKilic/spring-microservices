@@ -3,6 +3,7 @@ package com.ulascan.serverservice.service;
 import com.ulascan.serverservice.dto.scene.*;
 import com.ulascan.serverservice.dto.scene.SceneResponseDTO;
 import com.ulascan.serverservice.entity.Scene;
+import com.ulascan.serverservice.repository.ISceneRepository;
 import com.ulascan.serverservice.repository.IServerRepository;
 import org.modelmapper.ModelMapper;
 
@@ -13,9 +14,12 @@ public abstract class AbstractSceneService {
     protected ModelMapper mapper = new ModelMapper();
 
     protected IServerRepository serverRepository;
+    protected ISceneRepository sceneRepository;
 
-    public AbstractSceneService(IServerRepository serverRepository) {
+    public AbstractSceneService(IServerRepository serverRepository,
+                                ISceneRepository sceneRepository) {
         this.serverRepository = serverRepository;
+        this.sceneRepository = sceneRepository;
     }
 
     public abstract List<SceneResponseDTO> getAll();
@@ -51,6 +55,7 @@ public abstract class AbstractSceneService {
      * @return true if there is a free server, false otherwise.
      */
     public boolean findFreeServer() {
-        return serverRepository.findFirstBySceneIsNull().isEmpty(); //TODO edge case: what if I submit 2 scenes in a row? Should I also check server count?
+        return serverRepository.findFirstBySceneIsNull().isEmpty() &&
+                sceneRepository.count() <= serverRepository.count();
     }
 }

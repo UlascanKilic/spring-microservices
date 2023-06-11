@@ -6,6 +6,7 @@ import com.ulascan.serverservice.dto.scene.session.*;
 import com.ulascan.serverservice.entity.Scene;
 import com.ulascan.serverservice.entity.Server;
 import com.ulascan.serverservice.entity.SessionEntity;
+import com.ulascan.serverservice.repository.ISceneRepository;
 import com.ulascan.serverservice.repository.IServerRepository;
 import com.ulascan.serverservice.repository.ISessionRepository;
 import com.ulascan.serverservice.service.AbstractSceneService;
@@ -29,8 +30,9 @@ public class SessionSceneService extends AbstractSceneService {
     @Autowired
     public SessionSceneService(ISessionRepository repository,
                                ModelConverter modelConverter,
-                               IServerRepository serverRepository){
-        super(serverRepository);
+                               IServerRepository serverRepository,
+                               ISceneRepository sceneRepository){
+        super(serverRepository,sceneRepository);
         this.repository = repository;
         this.modelConverter = modelConverter;
     }
