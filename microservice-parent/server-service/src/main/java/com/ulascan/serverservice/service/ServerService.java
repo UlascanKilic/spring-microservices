@@ -76,7 +76,7 @@ public class ServerService implements IServerService {
         } else if (Objects.equals(responseDTO.getUnityScene(), UnityScene.IdleScene) && server.getScene() != null) {
             responseDTO.setUnityScene(UnityScene.IdleScene);
 
-            //TODO sahneyi sil
+            sceneService.setSceneFree(server.getScene());
 
         }
 
