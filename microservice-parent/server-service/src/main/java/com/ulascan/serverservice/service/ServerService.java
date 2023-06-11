@@ -53,7 +53,7 @@ public class ServerService implements IServerService {
      */
     @Transactional
     @Lock(LockModeType.PESSIMISTIC_WRITE)
-    public ServerResponseDTO setServer(ServerRequestDTO serverRequestDTO) {
+    public synchronized ServerResponseDTO setServer(ServerRequestDTO serverRequestDTO) {
 
         Server server = IServerRepository.findByServerName(serverRequestDTO.getServerName());
         Scene scene = sceneService.findFirstAvailableScene();

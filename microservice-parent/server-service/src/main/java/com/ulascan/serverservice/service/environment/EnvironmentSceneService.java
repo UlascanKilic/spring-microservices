@@ -114,6 +114,7 @@ public class EnvironmentSceneService extends AbstractSceneService {
             serverRepository.save(server);
         }
 
+        environmentEntity.setActive(false);
         //repository.delete(environmentEntity);
     }
 
