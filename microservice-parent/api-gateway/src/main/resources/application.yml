@@ -27,7 +27,10 @@ spring:
         - id: server-service
           uri: lb://server-service
           predicates:
-            - Path=/api/server/**
+            - Path=/api/server
+          filters:
+            - JwtAuthorizationFilter
+
 
         - id: server-service
           uri: lb://server-service
@@ -52,3 +55,7 @@ authorization:
       method: GET
       authorities:
         - ADMIN
+    - path: /api/server
+      method: POST
+      authorities:
+        - SERVER

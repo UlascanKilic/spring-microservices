@@ -54,6 +54,24 @@ services:
 
 
 
+  postgres-user:
+    container_name: postgres-user
+    image: postgres
+    environment:
+      POSTGRES_DB: user-service
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      PGDATA: /data/postgres
+    volumes:
+      - ./postgres-user:/data/postgres
+    expose:
+      - "5431"
+    ports:
+      - "5431:5431"
+    command: -p 5431
+    restart: always
+    networks:
+      - eduverse-network
 
 
 
@@ -78,7 +96,22 @@ services:
       - eduverse-network
 
 
-
+  ## User-Service Docker Compose Config
+  user-service:
+    container_name: user-service
+    build:
+      context: ./user-service
+      dockerfile: ../user-service/Dockerfile
+    image: starverse/user-service:latest
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-user:5431/user-service
+    env_file: ./.env
+    depends_on:
+      - postgres-user
+      - discovery-server
+      - api-gateway
+    networks:
+      - eduverse-network
 
 
 
