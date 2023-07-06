@@ -25,14 +25,14 @@ public class UserController {
 
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public UserDTO getUserById(@PathVariable(value = "id") Integer userId)
+    public UserDTO getUserById(@PathVariable(value = "id") Long userId)
     {
         return userService.getUserById(userId);
     }
 
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public void updateUserById(@PathVariable(value = "id") Integer userId,
+    public void updateUserById(@PathVariable(value = "id") Long userId,
                                @RequestBody UserDTO userDTO)
     {
         userService.updateUserById(userId, userDTO);
@@ -40,7 +40,7 @@ public class UserController {
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteUserById(@PathVariable(value = "id") Integer userId)
+    public void deleteUserById(@PathVariable(value = "id") Long userId)
     {
         userService.deleteUserById(userId);
     }

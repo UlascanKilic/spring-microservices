@@ -4,10 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -31,6 +28,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -62,6 +60,7 @@ public class AuthenticationService implements IAuthenticationService {
             throw new ConflictException(Error.EMAIL_IS_IN_USE.getErrorCode(), Error.EMAIL_IS_IN_USE.getErrorMessage());
 
         User user = User.builder()
+                .userId(Math.abs(UUID.randomUUID().getMostSignificantBits()))
                 .firstName(request.getFirstName())
                 .lastName(request.getLastName())
                 .email(request.getEmail())
@@ -136,6 +135,7 @@ public class AuthenticationService implements IAuthenticationService {
         //saveUserToken(user, jwtToken);
 
          return AuthenticationResponseDTO.builder()
+                 .publicId(user.getUserId())
                  .accessToken(jwtToken)
                  .refreshToken(refreshToken)
                  .firstName(user.getFirstName())

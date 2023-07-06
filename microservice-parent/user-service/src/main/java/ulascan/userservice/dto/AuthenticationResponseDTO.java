@@ -16,6 +16,7 @@ public class AuthenticationResponseDTO {
     //@JsonProperty("refresh_token")
     private String refreshToken;
 
+    private Long publicId;
     private String firstName;
     private String lastName;
     private String role;

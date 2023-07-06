@@ -10,7 +10,6 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
-import java.util.List;
 
 @Data
 @Builder
@@ -22,6 +21,9 @@ public class User implements UserDetails {
     @Id
     @GeneratedValue
     private Integer id;
+
+    private Long userId;
+
     private String firstName;
     private String lastName;
 

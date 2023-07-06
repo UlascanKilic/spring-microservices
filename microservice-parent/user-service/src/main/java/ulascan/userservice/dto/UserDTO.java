@@ -12,6 +12,7 @@ import ulascan.userservice.entity.Role;
 @NoArgsConstructor
 public class UserDTO {
 
+    private Long userId;
     private String firstname;
     private String lastname;
     private String email;

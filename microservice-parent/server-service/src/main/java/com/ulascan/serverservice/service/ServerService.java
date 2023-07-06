@@ -5,6 +5,7 @@ import com.ulascan.serverservice.dto.server.ServerRequestDTO;
 import com.ulascan.serverservice.dto.server.ServerResponseDTO;
 import com.ulascan.serverservice.entity.Scene;
 import com.ulascan.serverservice.entity.Server;
+import com.ulascan.serverservice.enums.SceneType;
 import com.ulascan.serverservice.enums.UnityScene;
 import com.ulascan.serverservice.util.exception.BadRequestException;
 import com.ulascan.serverservice.util.exception.Error;
@@ -59,7 +60,10 @@ public class ServerService implements IServerService {
         Scene scene = sceneService.findFirstAvailableScene();
         //
 
-        ServerResponseDTO responseDTO = ServerResponseDTO.builder().unityScene(serverRequestDTO.getUnityScene()).build();
+        ServerResponseDTO responseDTO = ServerResponseDTO.builder()
+                .unityScene(serverRequestDTO.getUnityScene())
+                .sceneType(SceneType.ENVIRONMENT)
+                .build();
 
 
         if(responseDTO.getUnityScene() == UnityScene.LoadingScene) return responseDTO;
@@ -69,6 +73,7 @@ public class ServerService implements IServerService {
 
         if (scene != null && serverRequestDTO.getUnityScene().equals(UnityScene.IdleScene) && server.getScene() == null) {
             responseDTO.setUnityScene(scene.getUnityScene());
+            responseDTO.setSceneType(scene.getSceneType());
             scene.setActive(true);
             server.setScene(scene);
             scene.setServer(server);
@@ -76,8 +81,10 @@ public class ServerService implements IServerService {
         }
         if (!Objects.equals(responseDTO.getUnityScene(), UnityScene.IdleScene) && server.getScene() == null) {
             responseDTO.setUnityScene(UnityScene.IdleScene);
+            responseDTO.setSceneType(SceneType.ENVIRONMENT);
         } else if (Objects.equals(responseDTO.getUnityScene(), UnityScene.IdleScene) && server.getScene() != null) {
             responseDTO.setUnityScene(UnityScene.IdleScene);
+            responseDTO.setSceneType(SceneType.ENVIRONMENT);
 
             sceneService.setSceneFree(server.getScene());
 

@@ -41,10 +41,16 @@ public class UserService implements IUserService{
      * @return UserDTO object representing the retrieved user.
      * @throws BadRequestException if the user doesn't exist.
      */
-    public UserDTO getUserById(Integer userId){
+    public UserDTO getUserById(Long userId){
         //Find user by id
         //convert into userDTO
-        User user = userById(userId);
+        User user = userByPublicId(userId);
+        return mapper.entityToDTO(user);
+    }
+    public UserDTO getUserByPublicId(Long publicId){
+        //Find user by id
+        //convert into userDTO
+        User user = userByPublicId(publicId);
         return mapper.entityToDTO(user);
     }
 
@@ -53,9 +59,9 @@ public class UserService implements IUserService{
      * @param userId The ID of the user to update.
      * @param userDTO UserDTO object containing updated user information.
      */
-    public void updateUserById(Integer userId, UserDTO userDTO)
+    public void updateUserById(Long userId, UserDTO userDTO)
     {
-        User user = userById(userId);
+        User user = userByPublicId(userId);
         user = mapper.dtoToEntity(userDTO,user);
         userRepository.save(user);
     }
@@ -64,23 +70,23 @@ public class UserService implements IUserService{
      * Deletes a user by ID.
      * @param userId The ID of the user to delete.
      */
-    public void deleteUserById(Integer userId)
+    public void deleteUserById(Long userId)
     {
-        User user = userById(userId);
+        User user = userByPublicId(userId);
         userRepository.delete(user);
 
     }
 
     /**
-     * Retrieves a user by ID.
-     * @param userId The ID of the user to retrieve.
+     * Retrieves a user by Public ID.
+     * @param publicId The Public ID of the user to retrieve.
      * @return User object representing the retrieved user.
      * @throws BadRequestException if the user doesn't exist.
      */
-    public User userById(Integer userId){
-        if(userRepository.findById(userId).isEmpty())
+    public User userByPublicId(Long publicId){
+        if(userRepository.findByPublicId(publicId).isEmpty())
             throw new BadRequestException(Error.USER_DOESNT_EXIST.getErrorCode(), Error.USER_DOESNT_EXIST.getErrorMessage());
 
-        return userRepository.findById(userId).get();
+        return userRepository.findByPublicId(publicId).get();
     }
 }
